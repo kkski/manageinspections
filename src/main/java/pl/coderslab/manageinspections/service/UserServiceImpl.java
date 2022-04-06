@@ -1,7 +1,11 @@
-package pl.coderslab.manageinspections;
+package pl.coderslab.manageinspections.service;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import pl.coderslab.manageinspections.model.Role;
+import pl.coderslab.manageinspections.model.User;
+import pl.coderslab.manageinspections.repository.RoleRepository;
+import pl.coderslab.manageinspections.repository.UserRepository;
 
 import java.util.Arrays;
 import java.util.HashSet;

@@ -1,4 +1,6 @@
-package pl.coderslab.manageinspections;
+package pl.coderslab.manageinspections.service;
+
+import pl.coderslab.manageinspections.model.User;
 
 public interface UserService {
     User findByUserName(String name);

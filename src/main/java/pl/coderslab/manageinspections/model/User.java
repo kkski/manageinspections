@@ -1,4 +1,4 @@
-package pl.coderslab.manageinspections;
+package pl.coderslab.manageinspections.model;
 
 import lombok.Data;
 
