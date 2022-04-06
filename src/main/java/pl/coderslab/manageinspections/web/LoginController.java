@@ -11,4 +11,8 @@ public class LoginController {
     public String login() {
         return "/admin/login";
     }
+    @GetMapping("/app")
+    public String viewIndex() {
+        return "/app/index"; }
+
 }
