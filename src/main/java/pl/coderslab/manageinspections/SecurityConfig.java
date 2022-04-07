@@ -14,8 +14,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
                 .antMatchers("/login").permitAll()
+                .antMatchers("/register").permitAll()
+
                 .antMatchers("/app/**").hasRole("USER")
-                   .and().formLogin().loginPage("/login")
+                   .and().formLogin()
+                .loginPage("/login")
+                .loginProcessingUrl("/login").successForwardUrl("/app")
+                .defaultSuccessUrl("/app")
                .and().logout().logoutSuccessUrl("/").permitAll()
                .and().exceptionHandling().accessDeniedPage("/403");
     }
