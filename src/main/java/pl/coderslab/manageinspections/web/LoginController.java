@@ -6,12 +6,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import pl.coderslab.manageinspections.model.User;
 import pl.coderslab.manageinspections.repository.UserRepository;
+import pl.coderslab.manageinspections.service.UserService;
 
 @Controller
 @RequestMapping("/")
 public class LoginController {
 
-    UserRepository userRepository;
+    private final UserService userService;
+    public LoginController(UserService userService) {
+        this.userService = userService;
+    }
+
 
     @GetMapping("/login")
     public String login() {
@@ -21,15 +26,12 @@ public class LoginController {
     public String viewIndex() {
         return "/app/index"; }
 
-    @GetMapping("/create-user")
-    @ResponseBody
-    public String createUser() {
+
+    @GetMapping("/create-user") @ResponseBody public String createUser() {
         User user = new User();
         user.setUsername("user");
         user.setPassword("user");
-        userRepository.save(user);
-        return "dodano";
-    }
+        userService.saveUser(user); return "user"; }
 
 
 }
