@@ -22,4 +22,11 @@ public class Site {
     private List<Area> areasList = new ArrayList<>();
     @ManyToMany
     private List<Inspector> inspectorsList = new ArrayList<>();
+
+    @OneToOne
+    @JoinColumn(name = "chosen_area_id")
+    private Area chosenArea;
+
+    @OneToMany
+    private List<Scaffold> scaffoldList;
 }

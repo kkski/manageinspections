@@ -5,28 +5,38 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
-import pl.coderslab.manageinspections.model.Inspector;
-import pl.coderslab.manageinspections.model.Site;
-import pl.coderslab.manageinspections.model.User;
-import pl.coderslab.manageinspections.repository.InspectorRepository;
-import pl.coderslab.manageinspections.repository.SiteRepository;
-import pl.coderslab.manageinspections.repository.UserRepository;
+import pl.coderslab.manageinspections.model.*;
+import pl.coderslab.manageinspections.model.ScaffoldDto;
+import pl.coderslab.manageinspections.repository.*;
 import pl.coderslab.manageinspections.service.CurrentUser;
 import pl.coderslab.manageinspections.service.UserService;
+
+import java.sql.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Properties;
 
 @Controller
 @RequestMapping("/app")
 public class AppController {
     private final SiteRepository siteRepository;
+    private final AreaRepository areaRepository;
     private final UserRepository userRepository;
     private final InspectorRepository inspectorRepository;
     private final UserService userService;
+    private final ScaffoldRepository scaffoldRepository;
 
-    public AppController(SiteRepository siteRepository, UserRepository userRepository, InspectorRepository inspectorRepository, UserService userService) {
+
+    public AppController(ScaffoldRepository scaffoldRepository, AreaRepository areaRepository, SiteRepository siteRepository, UserRepository userRepository, InspectorRepository inspectorRepository, UserService userService) {
         this.userRepository = userRepository;
         this.inspectorRepository = inspectorRepository;
         this.userService = userService;
         this.siteRepository = siteRepository;
+        this.areaRepository = areaRepository;
+        this.scaffoldRepository = scaffoldRepository;
     }
 
     @GetMapping("")
@@ -37,6 +47,87 @@ public class AppController {
         model.addAttribute("inspectorName", myUser.getInspector().getFirstName());
         return "app/dashboard";
     }
+
+    @GetMapping("/area/add")
+    public String addAreaForm(@AuthenticationPrincipal CurrentUser customUser, Model model) {
+        model.addAttribute("areaForm", new Area());
+        return "app/area/addarea";
+    }
+
+    @PostMapping("/area/add")
+    public RedirectView addArea(@ModelAttribute("areaForm") Area areaForm, Model model, @AuthenticationPrincipal CurrentUser customUser) {
+
+        User entityUser = customUser.getUser();
+        User myUser = userService.findByUserName(entityUser.getUsername());
+
+        Area myArea = new Area();
+        myArea.setName(areaForm.getName());
+        myArea.setSite(myUser.getInspector().getChosenSite());
+
+        areaRepository.save(myArea);
+
+
+        myUser.getInspector().getChosenSite().getAreasList().add(myArea);
+        userRepository.save(myUser);
+        return new RedirectView("/app/area/showareas");
+
+    }
+
+    @GetMapping("/area/showareas")
+    public String showAreas(@AuthenticationPrincipal CurrentUser customUser, Model model) {
+        User entityUser = customUser.getUser();
+        User myUser = userService.findByUserName(entityUser.getUsername());
+        model.addAttribute("areaList", myUser.getInspector().getChosenSite().getAreasList());
+        return "app/area/showareas";
+    }
+
+
+    @GetMapping("/scaffold/add")
+    public String addScaffoldForm(@AuthenticationPrincipal CurrentUser customUser, Model model) {
+        model.addAttribute("scaffoldForm", new ScaffoldDto());
+        User entityUser = customUser.getUser();
+        User myUser = userService.findByUserName(entityUser.getUsername());
+        model.addAttribute("areaList", myUser.getInspector().getChosenSite().getAreasList());
+        return "app/scaffold/addscaffold";
+    }
+
+    @PostMapping("/scaffold/add")
+    public RedirectView addScaffold(@ModelAttribute("scaffoldForm") ScaffoldDto scaffoldForm, Model model, @AuthenticationPrincipal CurrentUser customUser) {
+        Scaffold myScaffold = new Scaffold();
+        User entityUser = customUser.getUser();
+        User myUser = userService.findByUserName(entityUser.getUsername());
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        Site chosenSite = myUser.getInspector().getChosenSite();
+
+        Area chosenArea = areaRepository.getAreaByNameAndSiteId(scaffoldForm.getArea(), chosenSite.getId());
+
+        myScaffold.setSite(chosenSite);
+        myScaffold.setName(scaffoldForm.getName());
+        myScaffold.setErectorName(scaffoldForm.getErectorName());
+        myScaffold.setForemanName(scaffoldForm.getForemanName());
+        myScaffold.setScaffoldGrade(scaffoldForm.getScaffoldGrade());
+        myScaffold.setArea(chosenArea);
+        LocalDate dateOfCreation = LocalDate.parse(scaffoldForm.getDateOfErection(), formatter);
+        myScaffold.setDateOfErection(dateOfCreation);
+        myScaffold.setScaffoldId(scaffoldForm.getScaffoldId());
+
+        scaffoldRepository.save(myScaffold);
+
+        userRepository.save(myUser);
+        return new RedirectView("/app/scaffold/showscaffolds");
+
+    }
+
+    @GetMapping("/scaffold/showscaffolds")
+    public String showScaffolds(@AuthenticationPrincipal CurrentUser customUser, Model model) {
+        User entityUser = customUser.getUser();
+        User myUser = userService.findByUserName(entityUser.getUsername());
+        model.addAttribute("scaffoldList", scaffoldRepository.getAllBySite(myUser.getInspector().getChosenSite()));
+        return "app/scaffold/showscaffolds";
+    }
+
+
 
 }
 

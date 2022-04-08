@@ -1,3 +1,10 @@
+<%--
+  Created by IntelliJ IDEA.
+  User: kkski
+  Date: 08.04.22
+  Time: 23:48
+  To change this template use File | Settings | File Templates.
+--%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -5,31 +12,14 @@
 <c:set var="contextPath" value="${pageContext.request.contextPath}"/>
 <html>
 <head>
-    <title>Dashboard</title>
+ <title>List of areas</title>
 </head>
 <body>
-<h2>Hello ${inspectorName}!</h2>
-<h1>Site: ${chosenSite.name}</h1>
+<h2>Areas list</h2>
 
-<div>
-    <a href="/app/scaffold/add">
-        <span>Add a scaffold</span>
-    </a>
-</div>
-<div>
-    <a href="/app/area/add">
-        <span>Add an area</span>
-    </a>
-</div>
-
-<hr>
-
-<div>
-
-
-
-</div>
-
-
+<c:forEach var="area" items="${areaList}">
+  ${area.name}
+    <br>
+</c:forEach>
 </body>
 </html>

@@ -29,10 +29,14 @@ public class LoginController {
     public String index() {
         return "/index";
     }
+
+
+
     @GetMapping("/login")
     public String login() {
         return "/admin/login";
     }
+
 
     @GetMapping("/logout")
     public String logout() {
