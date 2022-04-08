@@ -2,6 +2,7 @@ package pl.coderslab.manageinspections.service;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import pl.coderslab.manageinspections.dtos.UserDto;
 import pl.coderslab.manageinspections.model.Role;
 import pl.coderslab.manageinspections.model.User;
 import pl.coderslab.manageinspections.repository.RoleRepository;
@@ -29,8 +30,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void saveUser(User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+    public void saveUser(UserDto dto) {
+        User user = new User();
+        user.setUsername(dto.getUsername());
+        user.setPassword(passwordEncoder.encode(dto.getPassword()));
         user.setEnabled(1);
         Role userRole = roleRepository.findByName("ROLE_USER");
         user.setRoles(new HashSet<>(Arrays.asList(userRole)));

@@ -13,11 +13,7 @@ public class UserDto {
 
     @NotNull
     @NotEmpty
-    private String firstName;
-
-    @NotNull
-    @NotEmpty
-    private String lastName;
+    private String username;
 
     @NotNull
     @NotEmpty

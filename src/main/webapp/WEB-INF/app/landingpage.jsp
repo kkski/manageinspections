@@ -7,12 +7,18 @@
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
-
+<%@ taglib uri = "http://java.sun.com/jsp/jstl/core" prefix = "c" %>
 <html>
 <head>
-    <title>Title</title>
+    <title>Landing page</title>
 </head>
 <body>
-To see when logged
+<a href="/app/registerinspector">
+    <span>Hello ${inspectorName}!</span>
+
+    Choose site you work on now:
+
+
+</a>
 </body>
 </html>
