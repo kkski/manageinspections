@@ -12,7 +12,6 @@ import javax.validation.constraints.Size;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -45,25 +44,4 @@ public class Scaffold {
     private String scaffoldId;
     @ManyToOne
     private Site site;
-
-
-
-
-//    @Transient
-//    private String a;
-//    private String b;
-//
-//    @PrePersist
-//    @PreUpdate
-//    public void calculateGrade() {
-//
-//        scaffoldGrade = 7
-//
-//    }
 }
-
-//heavy medium light
-
-// listener by pokazac grade
-//scaffoldUtils przyjmuje scaffold i liczy grade
-// przypomniec sobie enum
