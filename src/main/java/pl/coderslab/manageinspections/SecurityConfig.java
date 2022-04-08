@@ -19,8 +19,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/app/**").hasRole("USER")
                    .and().formLogin()
                 .loginPage("/login")
-                .loginProcessingUrl("/login").successForwardUrl("/app")
-                .defaultSuccessUrl("/app")
+                .loginProcessingUrl("/login").successForwardUrl("/start")
+                .defaultSuccessUrl("/start")
                .and().logout().logoutSuccessUrl("/").permitAll()
                .and().exceptionHandling().accessDeniedPage("/403");
     }

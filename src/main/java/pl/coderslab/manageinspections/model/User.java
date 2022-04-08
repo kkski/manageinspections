@@ -22,5 +22,16 @@ public class User {
     private Set<Role> roles;
 
     @OneToOne
+    @JoinTable(name = "user_inspector"
+            , joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "inspector_id"))
     private Inspector inspector;
+
+    public boolean hasInspector() {
+        if (this.inspector != null) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

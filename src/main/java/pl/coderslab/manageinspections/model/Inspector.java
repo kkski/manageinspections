@@ -20,6 +20,12 @@ public class Inspector {
     @Min(1)
     @Max(4)
     private int inspectorGrade = 4;
+    @ManyToMany
+    private List<Site> sitesList = new ArrayList<>();
+
+    @OneToOne
+    @JoinColumn(name = "chosen_site_id")
+    private Site chosenSite;
 
 
 }

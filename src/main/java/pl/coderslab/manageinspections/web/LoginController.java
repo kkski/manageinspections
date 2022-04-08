@@ -53,29 +53,7 @@ public class LoginController {
         userService.saveUser(userForm);
         return new RedirectView("");
     }
-    @GetMapping("/app")
-    public String viewLandingPageOrRegisterInspector(@AuthenticationPrincipal CurrentUser customUser, Model model) {
-        User entityUser = customUser.getUser();
-        User myUser = userService.findByUserName(entityUser.getUsername());
-        if (myUser.getInspector() != null) {
-            model.addAttribute("inspectorName", myUser.getInspector().getFirstName());
-            return "app/landingpage";
-        }
-        model.addAttribute("inspectorForm", new Inspector());
-        return "app/registerinspector";
-    }
 
-    @PostMapping("/app")
-    @ResponseBody
-    public RedirectView registerinspectorPost(@ModelAttribute("inspectorForm") Inspector inspectorForm, Model model, @AuthenticationPrincipal CurrentUser customUser) {
-        inspectorRepository.save(inspectorForm);
-        User entityUser = customUser.getUser();
-        User myUser = userService.findByUserName(entityUser.getUsername());
-        myUser.setInspector(inspectorForm);
-        userRepository.save(myUser);
-        return new RedirectView("/app");
-
-    }
 
 
 
