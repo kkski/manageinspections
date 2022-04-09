@@ -26,7 +26,9 @@ public class Site {
     @OneToOne
     @JoinColumn(name = "chosen_area_id")
     private Area chosenArea;
-
+    @OneToOne
+    @JoinColumn(name = "chosen_scaffold_id")
+    private Scaffold chosenScaffold;
     @OneToMany
     private List<Scaffold> scaffoldList;
 }

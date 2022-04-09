@@ -16,10 +16,49 @@
 </head>
 <body>
 <h2>Scaffolds list</h2>
+<table>
+    <tr>
+        <th>ScaffId</th>
+        <th>Name</th>
+        <th>Area</th>
+        <th>Builder name</th>
+        <th>Foreman name</th>
+        <th>Date of erection:</th>
+        <th>Grade</th>
+    </tr><form method="post" action="/app/scaffold/detailsscaffold">
 
-<c:forEach var="scaff" items="${scaffoldList}">
-    ${scaff.name}
-    <br>
-</c:forEach>
+<%--<form:form method="POST" modelAttribute="employee">--%>
+    <c:forEach var="scaff" items="${scaffoldList}">
+        <tr>
+            <td>${scaff.scaffoldId}</td>
+            <td>${scaff.name}</td>
+            <td>${scaff.area.name}</td>
+            <td>${scaff.erectorName}</td>
+            <td>${scaff.foremanName}</td>
+            <td>${scaff.dateOfErection}</td>
+            <td>${scaff.scaffoldGrade}</td>
+            <td><button type="submit" value="button" name="button" formmethod="post"> Click Here!</button></td>
+        </tr>
+<%--</form>--%>
+<%--        <form:form method="POST" modelAttribute="site" class="form-signin">--%>
+<%--            <spring:bind path="scaffoldId">--%>
+<%--    <div class="form-group ${status.error ? 'has-error' : ''}">--%>
+<%--                    <form:hidden path="scaffold" value = "${scaff.id}"/>--%>
+<%--    </div>--%>
+
+<%--            </spring:bind>--%>
+<%--            <button type="submit">Choose</button>--%>
+<%--        </form:form>--%>
+
+
+    </c:forEach>
+</form>
+
+</table>
+<div>
+    <a href="/app">
+        <span>Return to dashboard</span>
+    </a>
+</div>
 </body>
 </html>

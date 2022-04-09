@@ -10,10 +10,19 @@
 <body>
 <h2>Hello ${inspectorName}!</h2>
 <h1>Site: ${chosenSite.name}</h1>
-
+<div>
+    <a href="/start/2">
+        <span>Choose another site</span>
+    </a>
+</div>
 <div>
     <a href="/app/scaffold/add">
         <span>Add a scaffold</span>
+    </a>
+</div>
+<div>
+    <a href="/app/scaffold/showscaffolds">
+        <span>Show scaffolds on site</span>
     </a>
 </div>
 <div>

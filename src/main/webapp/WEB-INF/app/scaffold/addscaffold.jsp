@@ -62,7 +62,7 @@
 
     <spring:bind path="dateOfErection">
         <div class="form-group ${status.error ? 'has-error' : ''}">
-            <form:input type="date" path="dateOfErection" class="form-control" placeholder="Date of erection (DD/MM/YYYY)"
+            <form:input type="date" path="dateOfErection" class="form-control" placeholder="Date of erection (DD/MMYYYY)"
                         autofocus="true"></form:input>
             <form:errors path="dateOfErection"></form:errors>
         </div>

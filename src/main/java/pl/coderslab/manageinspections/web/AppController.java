@@ -5,19 +5,18 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
+
 import pl.coderslab.manageinspections.model.*;
 import pl.coderslab.manageinspections.model.ScaffoldDto;
 import pl.coderslab.manageinspections.repository.*;
 import pl.coderslab.manageinspections.service.CurrentUser;
 import pl.coderslab.manageinspections.service.UserService;
 
-import java.sql.Date;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+
 import java.time.format.DateTimeFormatter;
-import java.util.Properties;
+
 
 @Controller
 @RequestMapping("/app")
@@ -46,39 +45,6 @@ public class AppController {
         model.addAttribute("chosenSite", myUser.getInspector().getChosenSite());
         model.addAttribute("inspectorName", myUser.getInspector().getFirstName());
         return "app/dashboard";
-    }
-
-    @GetMapping("/area/add")
-    public String addAreaForm(@AuthenticationPrincipal CurrentUser customUser, Model model) {
-        model.addAttribute("areaForm", new Area());
-        return "app/area/addarea";
-    }
-
-    @PostMapping("/area/add")
-    public RedirectView addArea(@ModelAttribute("areaForm") Area areaForm, Model model, @AuthenticationPrincipal CurrentUser customUser) {
-
-        User entityUser = customUser.getUser();
-        User myUser = userService.findByUserName(entityUser.getUsername());
-
-        Area myArea = new Area();
-        myArea.setName(areaForm.getName());
-        myArea.setSite(myUser.getInspector().getChosenSite());
-
-        areaRepository.save(myArea);
-
-
-        myUser.getInspector().getChosenSite().getAreasList().add(myArea);
-        userRepository.save(myUser);
-        return new RedirectView("/app/area/showareas");
-
-    }
-
-    @GetMapping("/area/showareas")
-    public String showAreas(@AuthenticationPrincipal CurrentUser customUser, Model model) {
-        User entityUser = customUser.getUser();
-        User myUser = userService.findByUserName(entityUser.getUsername());
-        model.addAttribute("areaList", myUser.getInspector().getChosenSite().getAreasList());
-        return "app/area/showareas";
     }
 
 
@@ -125,6 +91,11 @@ public class AppController {
         User myUser = userService.findByUserName(entityUser.getUsername());
         model.addAttribute("scaffoldList", scaffoldRepository.getAllBySite(myUser.getInspector().getChosenSite()));
         return "app/scaffold/showscaffolds";
+    }
+
+    @PostMapping("/scaffold/showscaffolds")
+    public RedirectView goToDetails(@AuthenticationPrincipal CurrentUser customUser, Model model) {
+        return new RedirectView("app/scaffold/detailsscaffold");
     }
 
 

@@ -60,6 +60,7 @@ public class StartController {
     public String viewSiteChoice(@AuthenticationPrincipal CurrentUser customUser, Model model) {
         User entityUser = customUser.getUser();
         User myUser = userService.findByUserName(entityUser.getUsername());
+        myUser.getInspector().setChosenSite(null);
         model.addAttribute("sitesList", myUser.getInspector().getSitesList());
         model.addAttribute("chosenSite", new Site());
         model.addAttribute("inspectorName", myUser.getInspector().getFirstName());
