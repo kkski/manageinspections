@@ -20,15 +20,12 @@
     Choose site you work on now:
 </div>
 <div>
-<form:form modelAttribute="chosenSite" action="" method="post" >
-    <form:select path="name">
-        <form:option value="NONE">--SELECT--</form:option>
+
         <c:forEach var="site" items="${sitesList}">
-            <form:option value="${site.name}">${site.name}</form:option>
+            <a href="app/${site.id}">${site.name}</a>
         </c:forEach>
-    </form:select>
-    <button type="submit">Submit</button>
-</form:form>
+
+
 
 
 <%--    <c:forEach var="site" items="${sitesList}">--%>

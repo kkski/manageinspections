@@ -56,9 +56,13 @@ public class AreaController {
     }
 
     @GetMapping("/showareas")
-    public String showAreas(@AuthenticationPrincipal CurrentUser customUser, Model model) {
+    public String showAreas(@AuthenticationPrincipal CurrentUser customUser, Model model, Long siteId) {
+
+
         User entityUser = customUser.getUser();
         User myUser = userService.findByUserName(entityUser.getUsername());
+
+        // if myuser nie ma takiego zasobu to 404, jak ma to wyswietlaj
         model.addAttribute("areaList", myUser.getInspector().getChosenSite().getAreasList());
         return "app/area/showareas";
     }

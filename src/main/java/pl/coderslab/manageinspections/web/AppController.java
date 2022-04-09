@@ -19,7 +19,7 @@ import java.time.format.DateTimeFormatter;
 
 
 @Controller
-@RequestMapping("/app")
+@RequestMapping("/start/app")
 public class AppController {
     private final SiteRepository siteRepository;
     private final AreaRepository areaRepository;
@@ -38,13 +38,17 @@ public class AppController {
         this.scaffoldRepository = scaffoldRepository;
     }
 
-    @GetMapping("")
-    public String viewDashboard(@AuthenticationPrincipal CurrentUser customUser, Model model) {
+    @GetMapping("/{siteId}")
+    public String viewDashboard(@AuthenticationPrincipal CurrentUser customUser, Model model, @PathVariable("siteId") Long siteId) {
         User entityUser = customUser.getUser();
         User myUser = userService.findByUserName(entityUser.getUsername());
-        model.addAttribute("chosenSite", myUser.getInspector().getChosenSite());
-        model.addAttribute("inspectorName", myUser.getInspector().getFirstName());
-        return "app/dashboard";
+        if (myUser.getInspector().getSitesList().contains(siteRepository.getById(siteId))) {
+            model.addAttribute("chosenSite", siteRepository.getById(siteId));
+            model.addAttribute("inspectorName", myUser.getInspector().getFirstName());
+            return "app/dashboard";
+        } else {
+            return "admin/403";
+        }
     }
 
 
@@ -93,12 +97,15 @@ public class AppController {
         return "app/scaffold/showscaffolds";
     }
 
-    @PostMapping("/scaffold/showscaffolds")
-    public RedirectView goToDetails(@AuthenticationPrincipal CurrentUser customUser, Model model) {
-        return new RedirectView("app/scaffold/detailsscaffold");
+    @GetMapping("/scaffold/detailsscaffold/{scaffId}")
+    public String showScaffoldDetails(@AuthenticationPrincipal CurrentUser customUser, Model model, @PathVariable("scaffId") Long scaffId) {
+
+        return "app/scaffold/detailsscaffold";
     }
 
 
-
 }
+// Spring web bin session scope
+//@QueryParam
+
 

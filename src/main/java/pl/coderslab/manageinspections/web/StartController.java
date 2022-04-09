@@ -66,16 +66,6 @@ public class StartController {
         model.addAttribute("inspectorName", myUser.getInspector().getFirstName());
         return "app/site/sitechoice";
     }
-    @PostMapping("/2")
-    public RedirectView goToDashboard(@ModelAttribute("chosenSite") Site chosenSite, Model model, @AuthenticationPrincipal CurrentUser customUser) {
-        Site mySite = siteRepository.findSiteByName(chosenSite.getName());
-        User entityUser = customUser.getUser();
-        User myUser = userService.findByUserName(entityUser.getUsername());
-        myUser.getInspector().setChosenSite(mySite);
-        userRepository.save(myUser);
-        return new RedirectView("/app");
-
-    }
 
     @GetMapping("/2/site/add")
     public String addSite(@AuthenticationPrincipal CurrentUser customUser, Model model) {

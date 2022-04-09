@@ -25,7 +25,7 @@
         <th>Foreman name</th>
         <th>Date of erection:</th>
         <th>Grade</th>
-    </tr><form method="post" action="/app/scaffold/detailsscaffold">
+    </tr>
 
 <%--<form:form method="POST" modelAttribute="employee">--%>
     <c:forEach var="scaff" items="${scaffoldList}">
@@ -37,7 +37,7 @@
             <td>${scaff.foremanName}</td>
             <td>${scaff.dateOfErection}</td>
             <td>${scaff.scaffoldGrade}</td>
-            <td><button type="submit" value="button" name="button" formmethod="post"> Click Here!</button></td>
+            <td><a href="/detailsscaffold/${scaff.id}">Details</a></td>
         </tr>
 <%--</form>--%>
 <%--        <form:form method="POST" modelAttribute="site" class="form-signin">--%>
