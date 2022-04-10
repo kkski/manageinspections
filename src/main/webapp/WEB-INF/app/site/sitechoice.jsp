@@ -21,9 +21,15 @@
 </div>
 <div>
 
-        <c:forEach var="site" items="${sitesList}">
-            <a href="app/${site.id}">${site.name}</a>
-        </c:forEach>
+            <select onclick="location = this.value;">
+                <option value="disabled" disabled>Choose a site:</option>
+            <c:forEach var="site" items="${sitesList}">
+                <option value="../app/${site.id}">${site.name}</option>
+
+            </c:forEach>
+            </select>
+
+
 
 
 

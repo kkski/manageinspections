@@ -23,9 +23,5 @@ public class Inspector {
     @ManyToMany
     private List<Site> sitesList = new ArrayList<>();
 
-    @OneToOne
-    @JoinColumn(name = "chosen_site_id")
-    private Site chosenSite;
-
 
 }

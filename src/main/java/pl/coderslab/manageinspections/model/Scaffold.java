@@ -38,7 +38,7 @@ public class Scaffold {
     @DateTimeFormat
     private LocalDate dateOfErection;
     @OneToMany
-    private List<Inspection> listOfInspections = new ArrayList<Inspection>();
+    private List<Inspection> inspectionsList = new ArrayList<Inspection>();
     @Size(min = 5)
     @Column(unique = true)
     private String scaffoldId;

@@ -37,7 +37,7 @@
             <td>${scaff.foremanName}</td>
             <td>${scaff.dateOfErection}</td>
             <td>${scaff.scaffoldGrade}</td>
-            <td><a href="/detailsscaffold/${scaff.id}">Details</a></td>
+            <td><a href="/app/scaffold/detailsscaffold/${scaff.id}">Details</a></td>
         </tr>
 <%--</form>--%>
 <%--        <form:form method="POST" modelAttribute="site" class="form-signin">--%>

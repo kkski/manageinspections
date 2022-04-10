@@ -3,10 +3,7 @@ package pl.coderslab.manageinspections.web;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
 import pl.coderslab.manageinspections.model.Inspector;
 import pl.coderslab.manageinspections.model.Site;
@@ -16,6 +13,8 @@ import pl.coderslab.manageinspections.repository.SiteRepository;
 import pl.coderslab.manageinspections.repository.UserRepository;
 import pl.coderslab.manageinspections.service.CurrentUser;
 import pl.coderslab.manageinspections.service.UserService;
+
+import javax.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/start")
@@ -60,12 +59,16 @@ public class StartController {
     public String viewSiteChoice(@AuthenticationPrincipal CurrentUser customUser, Model model) {
         User entityUser = customUser.getUser();
         User myUser = userService.findByUserName(entityUser.getUsername());
-        myUser.getInspector().setChosenSite(null);
         model.addAttribute("sitesList", myUser.getInspector().getSitesList());
-        model.addAttribute("chosenSite", new Site());
         model.addAttribute("inspectorName", myUser.getInspector().getFirstName());
         return "app/site/sitechoice";
     }
+//    @PostMapping("/2")
+//    public RedirectView setSiteIdInSessionAndRedirectToApp
+//            (@RequestParam(value="siteId") Long siteId, @AuthenticationPrincipal CurrentUser customUser, Model model, HttpSession session) {
+//        session.setAttribute("siteId", siteId);
+//        return new RedirectView("/app");
+//    }
 
     @GetMapping("/2/site/add")
     public String addSite(@AuthenticationPrincipal CurrentUser customUser, Model model) {

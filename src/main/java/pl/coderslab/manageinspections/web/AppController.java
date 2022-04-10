@@ -13,13 +13,16 @@ import pl.coderslab.manageinspections.service.CurrentUser;
 import pl.coderslab.manageinspections.service.UserService;
 
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDate;
 
 import java.time.format.DateTimeFormatter;
 
 
 @Controller
-@RequestMapping("/start/app")
+@RequestMapping("/app")
 public class AppController {
     private final SiteRepository siteRepository;
     private final AreaRepository areaRepository;
@@ -39,7 +42,13 @@ public class AppController {
     }
 
     @GetMapping("/{siteId}")
-    public String viewDashboard(@AuthenticationPrincipal CurrentUser customUser, Model model, @PathVariable("siteId") Long siteId) {
+    public String viewDashboard(HttpServletResponse response, @AuthenticationPrincipal CurrentUser customUser, Model model, @PathVariable("siteId") Long siteId) {
+        // create and add cookie over chosen siteid
+        Cookie theCookie = new Cookie("siteId", String.valueOf(siteId));
+        theCookie.setMaxAge(60*60*1);
+        response.addCookie(theCookie);
+
+
         User entityUser = customUser.getUser();
         User myUser = userService.findByUserName(entityUser.getUsername());
         if (myUser.getInspector().getSitesList().contains(siteRepository.getById(siteId))) {
@@ -53,22 +62,31 @@ public class AppController {
 
 
     @GetMapping("/scaffold/add")
-    public String addScaffoldForm(@AuthenticationPrincipal CurrentUser customUser, Model model) {
+    public String addScaffoldForm(@AuthenticationPrincipal CurrentUser customUser, Model model, HttpServletRequest request) {
+        CookieUtil cookieUtil = new CookieUtil();
+        Long siteId = cookieUtil.getSiteIdCookieValue(request);
         model.addAttribute("scaffoldForm", new ScaffoldDto());
         User entityUser = customUser.getUser();
         User myUser = userService.findByUserName(entityUser.getUsername());
-        model.addAttribute("areaList", myUser.getInspector().getChosenSite().getAreasList());
-        return "app/scaffold/addscaffold";
+        if (myUser.getInspector().getSitesList().contains(siteRepository.getById(siteId))) {
+            model.addAttribute("areaList", siteRepository.getById(siteId).getAreasList());
+            return "app/scaffold/addscaffold";
+        } else {
+            return "admin/403";
+        }
+
     }
 
     @PostMapping("/scaffold/add")
-    public RedirectView addScaffold(@ModelAttribute("scaffoldForm") ScaffoldDto scaffoldForm, Model model, @AuthenticationPrincipal CurrentUser customUser) {
+    public RedirectView addScaffold(HttpServletRequest request, @ModelAttribute("scaffoldForm") ScaffoldDto scaffoldForm, Model model, @AuthenticationPrincipal CurrentUser customUser) {
+        CookieUtil cookieUtil = new CookieUtil();
+
         Scaffold myScaffold = new Scaffold();
         User entityUser = customUser.getUser();
         User myUser = userService.findByUserName(entityUser.getUsername());
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-        Site chosenSite = myUser.getInspector().getChosenSite();
+        Site chosenSite = siteRepository.getById(cookieUtil.getSiteIdCookieValue(request));
 
         Area chosenArea = areaRepository.getAreaByNameAndSiteId(scaffoldForm.getArea(), chosenSite.getId());
 
@@ -90,18 +108,23 @@ public class AppController {
     }
 
     @GetMapping("/scaffold/showscaffolds")
-    public String showScaffolds(@AuthenticationPrincipal CurrentUser customUser, Model model) {
+    public String showScaffolds(@AuthenticationPrincipal CurrentUser customUser, Model model, HttpServletRequest request) {
+        CookieUtil cookieUtil = new CookieUtil();
+
         User entityUser = customUser.getUser();
         User myUser = userService.findByUserName(entityUser.getUsername());
-        model.addAttribute("scaffoldList", scaffoldRepository.getAllBySite(myUser.getInspector().getChosenSite()));
+        model.addAttribute("scaffoldList", scaffoldRepository.getAllBySite(siteRepository.getById(cookieUtil.getSiteIdCookieValue(request))));
         return "app/scaffold/showscaffolds";
     }
 
     @GetMapping("/scaffold/detailsscaffold/{scaffId}")
     public String showScaffoldDetails(@AuthenticationPrincipal CurrentUser customUser, Model model, @PathVariable("scaffId") Long scaffId) {
-
+        Scaffold myScaffold = scaffoldRepository.getById(scaffId);
+        model.addAttribute("scaff", myScaffold);
         return "app/scaffold/detailsscaffold";
     }
+
+
 
 
 }

@@ -14,20 +14,24 @@ import pl.coderslab.manageinspections.repository.*;
 import pl.coderslab.manageinspections.service.CurrentUser;
 import pl.coderslab.manageinspections.service.UserService;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Properties;
 
 @Controller
-@RequestMapping("/app/area")
+@RequestMapping("/app/{siteId}/area")
 public class AreaController {
 
     private UserService userService;
     private AreaRepository areaRepository;
     private UserRepository userRepository;
-
-    public AreaController(UserService userService, AreaRepository areaRepository, UserRepository userRepository) {
+    private SiteRepository siteRepository;
+    private CookieUtil cookieUtil;
+    public AreaController(SiteRepository siteRepository, UserService userService, AreaRepository areaRepository, UserRepository userRepository) {
         this.userService = userService;
         this.areaRepository = areaRepository;
         this.userRepository = userRepository;
+        this.siteRepository = siteRepository;
+        this.cookieUtil = cookieUtil;
     }
 
     @GetMapping("/add")
@@ -37,33 +41,34 @@ public class AreaController {
     }
 
     @PostMapping("/add")
-    public RedirectView addArea(@ModelAttribute("areaForm") Area areaForm, Model model, @AuthenticationPrincipal CurrentUser customUser) {
+    public RedirectView addArea(HttpServletRequest request, @ModelAttribute("areaForm") Area areaForm, Model model, @AuthenticationPrincipal CurrentUser customUser) {
 
         User entityUser = customUser.getUser();
         User myUser = userService.findByUserName(entityUser.getUsername());
 
+        Long siteId = cookieUtil.getSiteIdCookieValue(request);
         Area myArea = new Area();
         myArea.setName(areaForm.getName());
-        myArea.setSite(myUser.getInspector().getChosenSite());
+        myArea.setSite(siteRepository.getById(siteId));
 
         areaRepository.save(myArea);
 
 
-        myUser.getInspector().getChosenSite().getAreasList().add(myArea);
+        siteRepository.getById(siteId).getAreasList().add(myArea);
         userRepository.save(myUser);
         return new RedirectView("/app/area/showareas");
 
     }
 
     @GetMapping("/showareas")
-    public String showAreas(@AuthenticationPrincipal CurrentUser customUser, Model model, Long siteId) {
+    public String showAreas(@AuthenticationPrincipal CurrentUser customUser, Model model, Long siteId, HttpServletRequest request) {
 
 
         User entityUser = customUser.getUser();
         User myUser = userService.findByUserName(entityUser.getUsername());
 
         // if myuser nie ma takiego zasobu to 404, jak ma to wyswietlaj
-        model.addAttribute("areaList", myUser.getInspector().getChosenSite().getAreasList());
+        model.addAttribute("areaList", siteRepository.getById(cookieUtil.getSiteIdCookieValue(request)).getAreasList());
         return "app/area/showareas";
     }
 }
