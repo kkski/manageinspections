@@ -23,12 +23,6 @@ public class Site {
     @ManyToMany
     private List<Inspector> inspectorsList = new ArrayList<>();
 
-    @OneToOne
-    @JoinColumn(name = "chosen_area_id")
-    private Area chosenArea;
-    @OneToOne
-    @JoinColumn(name = "chosen_scaffold_id")
-    private Scaffold chosenScaffold;
     @OneToMany
     private List<Scaffold> scaffoldList;
 }

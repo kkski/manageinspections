@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Properties;
 
 @Controller
-@RequestMapping("/app/{siteId}/area")
+@RequestMapping("/app/area")
 public class AreaController {
 
     private UserService userService;
@@ -26,6 +26,7 @@ public class AreaController {
     private UserRepository userRepository;
     private SiteRepository siteRepository;
     private CookieUtil cookieUtil;
+
     public AreaController(SiteRepository siteRepository, UserService userService, AreaRepository areaRepository, UserRepository userRepository) {
         this.userService = userService;
         this.areaRepository = areaRepository;
@@ -35,9 +36,19 @@ public class AreaController {
     }
 
     @GetMapping("/add")
-    public String addAreaForm(@AuthenticationPrincipal CurrentUser customUser, Model model) {
-        model.addAttribute("areaForm", new Area());
-        return "app/area/addarea";
+    public String addAreaForm(@AuthenticationPrincipal CurrentUser customUser, Model model, HttpServletRequest request) {
+        CookieUtil cookieUtil = new CookieUtil();
+        Long siteId = cookieUtil.getSiteIdCookieValue(request);
+
+        User entityUser = customUser.getUser();
+        User myUser = userService.findByUserName(entityUser.getUsername());
+
+        if (siteRepository.existsById(siteId) && myUser.getInspector().getSitesList().contains(siteRepository.getById(siteId))) {
+            model.addAttribute("areaForm", new Area());
+            return "app/area/addarea";
+        } else {
+            return "admin/403";
+        }
     }
 
     @PostMapping("/add")
@@ -67,8 +78,11 @@ public class AreaController {
         User entityUser = customUser.getUser();
         User myUser = userService.findByUserName(entityUser.getUsername());
 
-        // if myuser nie ma takiego zasobu to 404, jak ma to wyswietlaj
-        model.addAttribute("areaList", siteRepository.getById(cookieUtil.getSiteIdCookieValue(request)).getAreasList());
-        return "app/area/showareas";
+        if (siteRepository.existsById(siteId) && myUser.getInspector().getSitesList().contains(siteRepository.getById(siteId))) {
+            model.addAttribute("areaList", siteRepository.getById(cookieUtil.getSiteIdCookieValue(request)).getAreasList());
+            return "app/area/showareas";
+        } else {
+            return "admin/403";
+        }
     }
 }

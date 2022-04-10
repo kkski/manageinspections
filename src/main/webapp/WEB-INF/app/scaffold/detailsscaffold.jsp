@@ -7,6 +7,11 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<c:set var="contextPath" value="${pageContext.request.contextPath}"/>
+
 <html>
 <head>
     <title>Manage inspections of scaffold</title>
@@ -35,7 +40,7 @@
 </table>
 <hr>
 <div>
-    <a href="app/inspection/add/${scaff.id}">
+    <a href="../../../app/inspection/add/${scaff.id}">
         <span>Add an inspection</span>
     </a>
 </div>
@@ -46,14 +51,15 @@
             <th>Message:</th>
             <th>Approval:</th>
         </tr>
-    <c:forEach var="inspection" items="${scaff.inspectionsList}">
-        <tr>
-            <td>${inspection.dateOfInspection}</td>
-            <td>${inspection.inspectionMessage}</td>
-            <td>${inspection.approve}</td>
-        </tr>
+        <c:forEach var="inspection" items="${inspectionList}">
+            <tr>
+                <td>${inspection.dateOfInspection}</td>
+                <td>${inspection.inspectionMessage}</td>
+                <td>${inspection.approved}</td>
+            </tr>
+        </c:forEach>
 
-    </c:forEach>
+
 
 </table>
 </body>

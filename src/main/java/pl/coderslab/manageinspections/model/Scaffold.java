@@ -44,4 +44,5 @@ public class Scaffold {
     private String scaffoldId;
     @ManyToOne
     private Site site;
+
 }
