@@ -96,4 +96,8 @@ public class InspectionController {
 
     }
 
+
+
+
+    // if grade of inspector is lower than the scaffolding, do not let managing inspections
 }

@@ -52,5 +52,7 @@
 
 
 </table>
+
+<a href="/app/site/${siteId}/scaffold/showscaffolds">Back to scaffold list.</a>
 </body>
 </html>

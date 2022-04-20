@@ -17,5 +17,7 @@ public interface ScaffoldRepository extends JpaRepository<Scaffold, Long> {
     @Query("select s from Scaffold s where s.site.id = ?1 and s.approval = ?2")
     List<Scaffold> getAllBySiteIdAndApproval(Long id, boolean approval);
 
+    Scaffold getScaffoldByInspectionsListContains(Inspection inspection);
+
 
 }

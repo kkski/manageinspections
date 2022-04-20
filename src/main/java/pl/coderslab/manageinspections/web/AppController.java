@@ -69,7 +69,17 @@ public class AppController {
         User myUser = userService.findByUserName(entityUser.getUsername());
 
         if(siteRepository.existsById(siteId) && myUser.getInspector().getSitesList().contains(siteRepository.getById(siteId))) {
+            Inspection lastAddedInspection = inspectionRepository.getFirstBySiteId(siteId);
+
+            if(lastAddedInspection != null ) {
+                Scaffold lastInspectedScaffold = lastAddedInspection.getScaffold();
+                Area lastInspectedArea = lastInspectedScaffold.getArea();
+                model.addAttribute("lastAddedInspection", lastAddedInspection);
+                model.addAttribute("lastInspectedScaffold", lastInspectedScaffold);
+                model.addAttribute("lastInspectedArea", lastInspectedArea);
+            }
             model.addAttribute("scaffoldListCount", scaffoldRepository.getAllBySiteId(siteId).size());
+
             model.addAttribute("chosenSite", siteRepository.getById(siteId));
 
             model.addAttribute("inspectorName", myUser.getInspector().getFirstName());

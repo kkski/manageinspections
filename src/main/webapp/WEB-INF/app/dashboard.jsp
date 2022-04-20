@@ -41,7 +41,17 @@
 
 
 </div>
-
+<c:if test="${empty lastAddedInspection}">
+    There is no inspection yet! Add one to see info on dashboard.
+</c:if>
+<c:if test="${not empty lastAddedInspection}">
+    <div>
+        <p>Last added inspection was on ${lastAddedInspection.dateOfInspection}, on ${lastInspectedArea.name} zone.</p>
+        <p>Inspected scaffold: ${lastInspectedScaffold.name}</p>
+        <p>Note: ${lastAddedInspection.inspectionMessage}</p>
+        <p>Approval: ${lastAddedInspection.approved}</p>
+    </div>
+</c:if>
 
 </body>
 </html>
