@@ -62,8 +62,7 @@ public class InspectionController {
     public RedirectView addInspection(@ModelAttribute("inspectionForm") InspectionDto inspectionForm,
                                       @PathVariable("scaffId") Long scaffId,
                                       @PathVariable("siteId") Long siteId,
-                                      @AuthenticationPrincipal CurrentUser customUser)
-    {
+                                      @AuthenticationPrincipal CurrentUser customUser) {
 
         Inspection myInspection = new Inspection();
         User entityUser = customUser.getUser();
@@ -82,7 +81,15 @@ public class InspectionController {
         myInspection.setSite(siteRepository.getById(siteId));
 
         inspectionRepository.save(myInspection);
-        chosenScaffold.checkApproval();
+
+
+        if (myInspection.getDateOfInspection().isAfter(LocalDate.now().minusDays(7)) && myInspection.isApproved() == true) {
+            chosenScaffold.setApproval(true);
+        } else {
+            chosenScaffold.setApproval(false);
+        }
+
+
         scaffoldRepository.save(chosenScaffold);
         siteRepository.getById(siteId).getInspectionList().add(myInspection);
         return new RedirectView("/app/site/{siteId}/scaffold/{scaffId}/detailsscaffold");

@@ -50,20 +50,20 @@ public class Scaffold {
     private String scaffoldId;
     @ManyToOne
     private Site site;
-    private boolean approval;
+    private boolean approval = false;
 
-    @PrePersist
-    @PreUpdate
-    public void checkApproval() {
-        this.inspectionsList.sort(Comparator.comparing(o -> o.getDateOfInspection()));
-        if (!inspectionsList.isEmpty()) {
-            Inspection latestInspection = this.inspectionsList.get(0);
-            if (latestInspection.getDateOfInspection().isAfter(LocalDate.now().minusDays(7)) && latestInspection.isApproved() == true) {
-                this.setApproval(true);
-            }
-        } else {
-            this.setApproval(false);
-        }
-    };
+//    @PrePersist
+//    @PreUpdate
+//    public void checkApproval() {
+//        this.inspectionsList.sort(Comparator.comparing(o -> o.getDateOfInspection()));
+//        if (!inspectionsList.isEmpty()) {
+//            Inspection latestInspection = this.inspectionsList.get(0);
+//            if (latestInspection.getDateOfInspection().isAfter(LocalDate.now().minusDays(7)) && latestInspection.isApproved() == true) {
+//                this.setApproval(true);
+//            }
+//        } else {
+//            this.setApproval(false);
+//        }
+//    };
 
 }

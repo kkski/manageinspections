@@ -11,9 +11,6 @@ import pl.coderslab.manageinspections.repository.*;
 import pl.coderslab.manageinspections.service.CurrentUser;
 import pl.coderslab.manageinspections.service.UserService;
 
-import javax.servlet.http.HttpServletRequest;
-
-
 @Controller
 @RequestMapping("/app")
 public class AppController {
@@ -80,7 +77,7 @@ public class AppController {
             return "app/dashboard";
 
         } else {
-            return "admin/404";
+            return "admin/403";
         }
     }
 
