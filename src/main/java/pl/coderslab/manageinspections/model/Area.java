@@ -22,5 +22,10 @@ public class Area {
     private Site site;
     private String name;
     @OneToMany
+            (
+                    mappedBy = "area",
+                    cascade = CascadeType.ALL,
+                    orphanRemoval = true
+            )
     private List<Scaffold> scaffoldList;
 }

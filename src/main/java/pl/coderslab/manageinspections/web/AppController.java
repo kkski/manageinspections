@@ -9,6 +9,7 @@ import org.springframework.web.servlet.view.RedirectView;
 import pl.coderslab.manageinspections.model.*;
 import pl.coderslab.manageinspections.repository.*;
 import pl.coderslab.manageinspections.service.CurrentUser;
+import pl.coderslab.manageinspections.service.SecurityService;
 import pl.coderslab.manageinspections.service.UserService;
 
 @Controller
@@ -22,8 +23,16 @@ public class AppController {
     private final UserService userService;
     private final ScaffoldRepository scaffoldRepository;
     private final InspectionRepository inspectionRepository;
+    private final SecurityService securityService;
 
-    public AppController(SiteRepository siteRepository, AreaRepository areaRepository, UserRepository userRepository, InspectorRepository inspectorRepository, UserService userService, ScaffoldRepository scaffoldRepository, InspectionRepository inspectionRepository) {
+    public AppController(SiteRepository siteRepository,
+                         AreaRepository areaRepository,
+                         UserRepository userRepository,
+                         InspectorRepository inspectorRepository,
+                         UserService userService,
+                         ScaffoldRepository scaffoldRepository,
+                         InspectionRepository inspectionRepository,
+                         SecurityService securityService) {
         this.siteRepository = siteRepository;
         this.areaRepository = areaRepository;
         this.userRepository = userRepository;
@@ -31,6 +40,7 @@ public class AppController {
         this.userService = userService;
         this.scaffoldRepository = scaffoldRepository;
         this.inspectionRepository = inspectionRepository;
+        this.securityService = securityService;
     }
 
 
@@ -68,29 +78,29 @@ public class AppController {
         User entityUser = customUser.getUser();
         User myUser = userService.findByUserName(entityUser.getUsername());
 
-        if(siteRepository.existsById(siteId) && myUser.getInspector().getSitesList().contains(siteRepository.getById(siteId))) {
-            Inspection lastAddedInspection = inspectionRepository.getFirstBySiteId(siteId);
-
-            if(lastAddedInspection != null ) {
-                Scaffold lastInspectedScaffold = lastAddedInspection.getScaffold();
-                Area lastInspectedArea = lastInspectedScaffold.getArea();
-                model.addAttribute("lastAddedInspection", lastAddedInspection);
-                model.addAttribute("lastInspectedScaffold", lastInspectedScaffold);
-                model.addAttribute("lastInspectedArea", lastInspectedArea);
-            }
-            model.addAttribute("scaffoldListCount", scaffoldRepository.getAllBySiteId(siteId).size());
-
-            model.addAttribute("chosenSite", siteRepository.getById(siteId));
-
-            model.addAttribute("inspectorName", myUser.getInspector().getFirstName());
-
-            return "app/dashboard";
-
-        } else {
+        if (!securityService.hasAccess(myUser.getId(), siteId)) {
             return "admin/403";
         }
-    }
 
+        Inspection lastAddedInspection = inspectionRepository.getFirstBySiteId(siteId);
+
+        if (lastAddedInspection != null) {
+            Scaffold lastInspectedScaffold = lastAddedInspection.getScaffold();
+            Area lastInspectedArea = lastInspectedScaffold.getArea();
+            model.addAttribute("lastAddedInspection", lastAddedInspection);
+            model.addAttribute("lastInspectedScaffold", lastInspectedScaffold);
+            model.addAttribute("lastInspectedArea", lastInspectedArea);
+        }
+        model.addAttribute("scaffoldListCount", scaffoldRepository.getAllBySiteId(siteId).size());
+
+        model.addAttribute("chosenSite", siteRepository.getById(siteId));
+
+        model.addAttribute("inspectorName", myUser.getInspector().getFirstName());
+
+        return "app/dashboard";
+
+
+    }
 
 
 }

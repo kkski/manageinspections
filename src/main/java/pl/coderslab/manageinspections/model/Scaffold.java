@@ -19,7 +19,7 @@ import java.util.Comparator;
 import java.util.List;
 
 @Entity
-@Table(name="scaffolds")
+@Table(name = "scaffolds")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -44,6 +44,11 @@ public class Scaffold {
     @DateTimeFormat
     private LocalDate dateOfErection;
     @OneToMany
+            (
+                    mappedBy = "scaffold",
+                    cascade = CascadeType.ALL,
+                    orphanRemoval = true
+            )
     private List<Inspection> inspectionsList = new ArrayList<Inspection>();
     @Size(min = 5)
     @Column(unique = true)

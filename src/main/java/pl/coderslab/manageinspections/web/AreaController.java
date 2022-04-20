@@ -8,12 +8,8 @@ import org.springframework.web.servlet.view.RedirectView;
 import pl.coderslab.manageinspections.model.*;
 import pl.coderslab.manageinspections.repository.*;
 import pl.coderslab.manageinspections.service.CurrentUser;
+import pl.coderslab.manageinspections.service.SecurityService;
 import pl.coderslab.manageinspections.service.UserService;
-
-import javax.servlet.http.HttpServletRequest;
-import java.util.List;
-import java.util.Properties;
-import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/app/site/{siteId}/area")
@@ -24,38 +20,48 @@ public class AreaController {
     private UserRepository userRepository;
     private SiteRepository siteRepository;
     private ScaffoldRepository scaffoldRepository;
+    private SecurityService securityService;
 
-    public AreaController(ScaffoldRepository scaffoldRepository, SiteRepository siteRepository, UserService userService, AreaRepository areaRepository, UserRepository userRepository) {
+    public AreaController(ScaffoldRepository scaffoldRepository, SiteRepository siteRepository, UserService userService, AreaRepository areaRepository, UserRepository userRepository, SecurityService securityService) {
         this.userService = userService;
         this.areaRepository = areaRepository;
         this.userRepository = userRepository;
         this.siteRepository = siteRepository;
         this.scaffoldRepository = scaffoldRepository;
+        this.securityService = securityService;
     }
 
     @GetMapping("/add")
-    public String addAreaForm(@AuthenticationPrincipal CurrentUser customUser, Model model, @PathVariable("siteId") Long siteId) {
+    public String addAreaForm(@AuthenticationPrincipal CurrentUser customUser,
+                              Model model,
+                              @PathVariable("siteId") Long siteId) {
 
         User entityUser = customUser.getUser();
         User myUser = userService.findByUserName(entityUser.getUsername());
 
-        if (siteRepository.existsById(siteId) && myUser.getInspector().getSitesList().contains(siteRepository.getById(siteId))) {
-            model.addAttribute("areaForm", new Area());
-            return "app/area/addarea";
-        } else {
+        if (!securityService.hasAccess(myUser.getId(), siteId)) {
             return "admin/403";
         }
+
+        model.addAttribute("areaForm", new Area());
+        return "app/area/addarea";
+
     }
 
     @PostMapping("/add")
     public RedirectView addArea(@ModelAttribute("areaForm") Area areaForm, Model model, @AuthenticationPrincipal CurrentUser customUser, @PathVariable("siteId") Long siteId) {
 
-        Area myArea = new Area();
         User entityUser = customUser.getUser();
         User myUser = userService.findByUserName(entityUser.getUsername());
 
+        if (!securityService.hasAccess(myUser.getId(), siteId)) {
+            return new RedirectView("/404");
+        }
+
+        Area myArea = new Area();
         myArea.setName(areaForm.getName());
         myArea.setSite(siteRepository.getById(siteId));
+
         areaRepository.save(myArea);
 
         siteRepository.getById(siteId).getAreasList().add(myArea);
@@ -66,18 +72,17 @@ public class AreaController {
 
     @GetMapping("/showareas")
     public String showAreas(@AuthenticationPrincipal CurrentUser customUser, Model model, @PathVariable("siteId") Long siteId) {
-
         User entityUser = customUser.getUser();
         User myUser = userService.findByUserName(entityUser.getUsername());
 
-        if (siteRepository.existsById(siteId) && myUser.getInspector().getSitesList().contains(siteRepository.getById(siteId))) {
-            model.addAttribute("areaList", siteRepository.getById(siteId).getAreasList());
-            return "app/area/showareas";
-        } else {
+        if (!securityService.hasAccess(myUser.getId(), siteId)) {
             return "admin/403";
         }
-    }
 
+        model.addAttribute("areaList", siteRepository.getById(siteId).getAreasList());
+        return "app/area/showareas";
+
+    }
 
 
     @GetMapping("/{areaId}/deletearea")
@@ -85,6 +90,14 @@ public class AreaController {
                                    Model model,
                                    @PathVariable("siteId") Long siteId,
                                    @PathVariable("areaId") Long areaId) {
+
+        User entityUser = customUser.getUser();
+        User myUser = userService.findByUserName(entityUser.getUsername());
+
+        if (!securityService.hasAccess(myUser.getId(), siteId)) {
+            return "admin/403";
+        }
+
         model.addAttribute("site", siteRepository.getById(siteId));
         model.addAttribute("area", areaRepository.getById(areaId));
         return "app/area/deletearea";
@@ -92,23 +105,22 @@ public class AreaController {
 
     @GetMapping("/{areaId}/deletearea/confirm")
     public RedirectView deleteArea(@AuthenticationPrincipal CurrentUser customUser,
-                            Model model,
-                            @PathVariable("siteId") Long siteId,
-                            @PathVariable("areaId") Long areaId) {
+                                   Model model,
+                                   @PathVariable("siteId") Long siteId,
+                                   @PathVariable("areaId") Long areaId) {
 
         User entityUser = customUser.getUser();
         User myUser = userService.findByUserName(entityUser.getUsername());
 
-        if (siteRepository.existsById(siteId) && myUser.getInspector().getSitesList().contains(siteRepository.getById(siteId))) {
-            Area areaToRemove = areaRepository.getById(areaId);
-            List<Long> idsOfScaffoldsFromAreaToRemove = areaToRemove.getScaffoldList().stream().map(Scaffold::getId).collect(Collectors.toList());
-            scaffoldRepository.deleteAllById(idsOfScaffoldsFromAreaToRemove);
-            siteRepository.getById(siteId).getAreasList().remove(areaToRemove);
-            areaRepository.delete(areaToRemove);
-            return new RedirectView("/app/site/{siteId}/area/showareas");
-        } else {
-            return new RedirectView("/403");
+        if (!securityService.hasAccess(myUser.getId(), siteId)) {
+            return new RedirectView("/404");
         }
+
+        Area areaToRemove = areaRepository.getById(areaId);
+        siteRepository.getById(siteId).getAreasList().remove(areaToRemove);
+        areaRepository.delete(areaToRemove);
+        return new RedirectView("/app/site/{siteId}/area/showareas");
+
     }
 
     @GetMapping("/{areaId}/editarea")
@@ -120,13 +132,14 @@ public class AreaController {
         User entityUser = customUser.getUser();
         User myUser = userService.findByUserName(entityUser.getUsername());
 
-        if (siteRepository.existsById(siteId) && myUser.getInspector().getSitesList().contains(siteRepository.getById(siteId))) {
-            model.addAttribute("area", areaRepository.getById(areaId));
-            model.addAttribute("areaForm", new Area());
-            return "app/area/editarea";
-        } else {
+        if (!securityService.hasAccess(myUser.getId(), siteId)) {
             return "admin/403";
         }
+
+        model.addAttribute("area", areaRepository.getById(areaId));
+        model.addAttribute("areaForm", new Area());
+        return "app/area/editarea";
+
     }
 
     @PostMapping("/{areaId}/editarea")
@@ -134,23 +147,20 @@ public class AreaController {
                                  Model model,
                                  @AuthenticationPrincipal CurrentUser customUser,
                                  @PathVariable("siteId") Long siteId,
-                                 @PathVariable("areaId") Long areaId)
-    {
+                                 @PathVariable("areaId") Long areaId) {
+
         User entityUser = customUser.getUser();
         User myUser = userService.findByUserName(entityUser.getUsername());
 
-        if (siteRepository.existsById(siteId) && myUser.getInspector().getSitesList().contains(siteRepository.getById(siteId))) {
-
-            Area areaToSave = areaRepository.getById(areaId);
-            areaToSave.setName(areaForm.getName());
-            areaRepository.save(areaToSave);
-
-            return new RedirectView("/app/site/{siteId}/area/showareas");
-
-        } else {
-
-            return new RedirectView("/403");
+        if (!securityService.hasAccess(myUser.getId(), siteId)) {
+            return new RedirectView("/404");
         }
+
+        Area areaToSave = areaRepository.getById(areaId);
+        areaToSave.setName(areaForm.getName());
+        areaRepository.save(areaToSave);
+
+        return new RedirectView("/app/site/{siteId}/area/showareas");
 
 
     }

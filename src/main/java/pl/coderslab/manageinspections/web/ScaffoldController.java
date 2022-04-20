@@ -9,9 +9,9 @@ import pl.coderslab.manageinspections.model.*;
 import pl.coderslab.manageinspections.model.ScaffoldDto;
 import pl.coderslab.manageinspections.repository.*;
 import pl.coderslab.manageinspections.service.CurrentUser;
+import pl.coderslab.manageinspections.service.SecurityService;
 import pl.coderslab.manageinspections.service.UserService;
 
-import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -26,8 +26,9 @@ public class ScaffoldController {
     private final UserService userService;
     private final ScaffoldRepository scaffoldRepository;
     private final InspectionRepository inspectionRepository;
+    private SecurityService securityService;
 
-    public ScaffoldController(SiteRepository siteRepository, AreaRepository areaRepository, UserRepository userRepository, InspectorRepository inspectorRepository, UserService userService, ScaffoldRepository scaffoldRepository, InspectionRepository inspectionRepository) {
+    public ScaffoldController(SiteRepository siteRepository, AreaRepository areaRepository, UserRepository userRepository, InspectorRepository inspectorRepository, UserService userService, ScaffoldRepository scaffoldRepository, InspectionRepository inspectionRepository, SecurityService securityService) {
         this.siteRepository = siteRepository;
         this.areaRepository = areaRepository;
         this.userRepository = userRepository;
@@ -35,6 +36,7 @@ public class ScaffoldController {
         this.userService = userService;
         this.scaffoldRepository = scaffoldRepository;
         this.inspectionRepository = inspectionRepository;
+        this.securityService = securityService;
     }
 
     @GetMapping("/add")
@@ -42,16 +44,16 @@ public class ScaffoldController {
                                   Model model,
                                   @PathVariable("siteId") Long siteId) {
 
-        model.addAttribute("scaffoldForm", new ScaffoldDto());
         User entityUser = customUser.getUser();
         User myUser = userService.findByUserName(entityUser.getUsername());
 
-        if (siteRepository.existsById(siteId) && myUser.getInspector().getSitesList().contains(siteRepository.getById(siteId))) {
-            model.addAttribute("areaList", siteRepository.getById(siteId).getAreasList());
-            return "app/scaffold/addscaffold";
-        } else {
+        if (!securityService.hasAccess(myUser.getId(), siteId)) {
             return "admin/403";
         }
+
+        model.addAttribute("scaffoldForm", new ScaffoldDto());
+        model.addAttribute("areaList", siteRepository.getById(siteId).getAreasList());
+        return "app/scaffold/addscaffold";
 
     }
 
@@ -60,9 +62,14 @@ public class ScaffoldController {
                                     @ModelAttribute("scaffoldForm") ScaffoldDto scaffoldForm,
                                     @AuthenticationPrincipal CurrentUser customUser) {
 
-        Scaffold myScaffold = new Scaffold();
         User entityUser = customUser.getUser();
         User myUser = userService.findByUserName(entityUser.getUsername());
+
+        if (!securityService.hasAccess(myUser.getId(), siteId)) {
+            return new RedirectView("/404");
+        }
+
+        Scaffold myScaffold = new Scaffold();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
         Site chosenSite = siteRepository.getById(siteId);
@@ -88,25 +95,31 @@ public class ScaffoldController {
 
     @GetMapping("/showscaffolds")
     public String showScaffolds(@AuthenticationPrincipal CurrentUser customUser, Model model, @PathVariable("siteId") Long siteId) {
-
         User entityUser = customUser.getUser();
         User myUser = userService.findByUserName(entityUser.getUsername());
 
-        if (siteRepository.existsById(siteId) && myUser.getInspector().getSitesList().contains(siteRepository.getById(siteId))) {
-            model.addAttribute("scaffoldList", scaffoldRepository.getAllBySiteId(siteId));
-            return "app/scaffold/showscaffolds";
-        } else {
+        if (!securityService.hasAccess(myUser.getId(), siteId)) {
             return "admin/403";
         }
+
+        model.addAttribute("scaffoldList", scaffoldRepository.getAllBySiteId(siteId));
+        return "app/scaffold/showscaffolds";
+
     }
 
     @GetMapping("/{scaffId}/detailsscaffold")
     public String showScaffoldDetails(@AuthenticationPrincipal CurrentUser customUser,
                                       Model model,
                                       @PathVariable("scaffId") Long scaffId,
-                                        @PathVariable("siteId") Long siteId)
+                                      @PathVariable("siteId") Long siteId) {
 
-    {
+        User entityUser = customUser.getUser();
+        User myUser = userService.findByUserName(entityUser.getUsername());
+
+        if (!securityService.hasAccess(myUser.getId(), siteId)) {
+            return "admin/403";
+        }
+
         Scaffold myScaffold = scaffoldRepository.getById(scaffId);
         List<Inspection> inspectionList = inspectionRepository.getAllByScaffoldId(scaffId);
 

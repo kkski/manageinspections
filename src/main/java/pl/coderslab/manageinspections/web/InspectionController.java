@@ -7,12 +7,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
 import pl.coderslab.manageinspections.dtos.InspectionDto;
 import pl.coderslab.manageinspections.model.*;
-import pl.coderslab.manageinspections.model.ScaffoldDto;
 import pl.coderslab.manageinspections.repository.*;
 import pl.coderslab.manageinspections.service.CurrentUser;
+import pl.coderslab.manageinspections.service.SecurityService;
 import pl.coderslab.manageinspections.service.UserService;
 
-import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -27,8 +26,9 @@ public class InspectionController {
     private final UserService userService;
     private final ScaffoldRepository scaffoldRepository;
     private final InspectionRepository inspectionRepository;
+    private final SecurityService securityService;
 
-    public InspectionController(SiteRepository siteRepository, AreaRepository areaRepository, UserRepository userRepository, InspectorRepository inspectorRepository, UserService userService, ScaffoldRepository scaffoldRepository, InspectionRepository inspectionRepository) {
+    public InspectionController(SiteRepository siteRepository, AreaRepository areaRepository, UserRepository userRepository, InspectorRepository inspectorRepository, UserService userService, ScaffoldRepository scaffoldRepository, InspectionRepository inspectionRepository, SecurityService securityService) {
         this.siteRepository = siteRepository;
         this.areaRepository = areaRepository;
         this.userRepository = userRepository;
@@ -36,6 +36,7 @@ public class InspectionController {
         this.userService = userService;
         this.scaffoldRepository = scaffoldRepository;
         this.inspectionRepository = inspectionRepository;
+        this.securityService = securityService;
     }
 
     @GetMapping("/add")
@@ -43,18 +44,19 @@ public class InspectionController {
                                     @PathVariable("siteId") Long siteId,
                                     @AuthenticationPrincipal CurrentUser customUser,
                                     Model model
-    ) {
-
+    )
+    {
         User entityUser = customUser.getUser();
         User myUser = userService.findByUserName(entityUser.getUsername());
 
-        if (siteRepository.existsById(siteId) && myUser.getInspector().getSitesList().contains(siteRepository.getById(siteId))) {
-            model.addAttribute("scaff", scaffoldRepository.getById(scaffId));
-            model.addAttribute("inspectionForm", new InspectionDto());
-            return "app/inspection/addinspection";
-        } else {
+        if (!securityService.hasAccess(myUser.getId(), siteId)) {
             return "admin/403";
         }
+
+        model.addAttribute("scaff", scaffoldRepository.getById(scaffId));
+        model.addAttribute("inspectionForm", new InspectionDto());
+        return "app/inspection/addinspection";
+
 
     }
 
@@ -64,9 +66,15 @@ public class InspectionController {
                                       @PathVariable("siteId") Long siteId,
                                       @AuthenticationPrincipal CurrentUser customUser) {
 
-        Inspection myInspection = new Inspection();
         User entityUser = customUser.getUser();
         User myUser = userService.findByUserName(entityUser.getUsername());
+
+        if (!securityService.hasAccess(myUser.getId(), siteId)) {
+            return new RedirectView("/404");
+        }
+
+        Inspection myInspection = new Inspection();
+
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
         Scaffold chosenScaffold = scaffoldRepository.getById(scaffId);
