@@ -37,7 +37,7 @@
 <hr>
 
 <div>
-
+<p>There are ${scaffoldListCount} scaffolds on this site.</p>
 
 
 </div>

@@ -62,8 +62,8 @@ public class InspectionController {
     public RedirectView addInspection(@ModelAttribute("inspectionForm") InspectionDto inspectionForm,
                                       @PathVariable("scaffId") Long scaffId,
                                       @PathVariable("siteId") Long siteId,
-                                      @AuthenticationPrincipal CurrentUser customUser,
-                                      Model model) {
+                                      @AuthenticationPrincipal CurrentUser customUser)
+    {
 
         Inspection myInspection = new Inspection();
         User entityUser = customUser.getUser();

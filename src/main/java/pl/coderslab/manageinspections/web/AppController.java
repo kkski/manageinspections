@@ -41,6 +41,7 @@ public class AppController {
     public String viewSiteChoice(@AuthenticationPrincipal CurrentUser customUser, Model model) {
         User entityUser = customUser.getUser();
         User myUser = userService.findByUserName(entityUser.getUsername());
+
         model.addAttribute("sitesList", myUser.getInspector().getSitesList());
         model.addAttribute("inspectorName", myUser.getInspector().getFirstName());
         return "app/site/sitechoice";
@@ -71,7 +72,7 @@ public class AppController {
         User myUser = userService.findByUserName(entityUser.getUsername());
 
         if(siteRepository.existsById(siteId) && myUser.getInspector().getSitesList().contains(siteRepository.getById(siteId))) {
-
+            model.addAttribute("scaffoldListCount", scaffoldRepository.getAllBySiteId(siteId).size());
             model.addAttribute("chosenSite", siteRepository.getById(siteId));
 
             model.addAttribute("inspectorName", myUser.getInspector().getFirstName());
