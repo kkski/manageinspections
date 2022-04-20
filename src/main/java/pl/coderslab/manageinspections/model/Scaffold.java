@@ -1,6 +1,9 @@
 package pl.coderslab.manageinspections.model;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
@@ -12,11 +15,14 @@ import javax.validation.constraints.Size;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Entity
 @Table(name="scaffolds")
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
 
 public class Scaffold {
     @Id
@@ -44,5 +50,20 @@ public class Scaffold {
     private String scaffoldId;
     @ManyToOne
     private Site site;
+    private boolean approval;
+
+    @PrePersist
+    @PreUpdate
+    public void checkApproval() {
+        this.inspectionsList.sort(Comparator.comparing(o -> o.getDateOfInspection()));
+        if (!inspectionsList.isEmpty()) {
+            Inspection latestInspection = this.inspectionsList.get(0);
+            if (latestInspection.getDateOfInspection().isAfter(LocalDate.now().minusDays(7)) && latestInspection.isApproved() == true) {
+                this.setApproval(true);
+            }
+        } else {
+            this.setApproval(false);
+        }
+    };
 
 }

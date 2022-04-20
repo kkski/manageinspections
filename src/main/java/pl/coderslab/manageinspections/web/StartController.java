@@ -14,8 +14,6 @@ import pl.coderslab.manageinspections.repository.UserRepository;
 import pl.coderslab.manageinspections.service.CurrentUser;
 import pl.coderslab.manageinspections.service.UserService;
 
-import javax.servlet.http.HttpSession;
-
 @Controller
 @RequestMapping("/start")
 public class StartController {
@@ -32,19 +30,21 @@ public class StartController {
     }
 
     @GetMapping("")
-    public RedirectView viewLandingPageOrRegisterInspector(@AuthenticationPrincipal CurrentUser customUser, Model model) {
+    public RedirectView viewLandingPageOrRegisterInspector(@AuthenticationPrincipal CurrentUser customUser) {
         User entityUser = customUser.getUser();
         User myUser = userService.findByUserName(entityUser.getUsername());
         if (myUser.hasInspector()) {
-            return new RedirectView("/start/2");
+            return new RedirectView("/app/site");
         }
         return new RedirectView("start/inspector/registerinspector");
     }
+
     @GetMapping("/inspector/registerinspector")
     public String registerInspector(@AuthenticationPrincipal CurrentUser customUser, Model model) {
         model.addAttribute("inspectorForm", new Inspector());
         return "app/inspector/registerinspector";
     }
+
     @PostMapping("/inspector/registerinspector")
     public RedirectView registerInspectorPost(@ModelAttribute("inspectorForm") Inspector inspectorForm, Model model, @AuthenticationPrincipal CurrentUser customUser) {
         inspectorRepository.save(inspectorForm);
@@ -55,35 +55,5 @@ public class StartController {
         return new RedirectView("/start");
 
     }
-    @GetMapping("/2")
-    public String viewSiteChoice(@AuthenticationPrincipal CurrentUser customUser, Model model) {
-        User entityUser = customUser.getUser();
-        User myUser = userService.findByUserName(entityUser.getUsername());
-        model.addAttribute("sitesList", myUser.getInspector().getSitesList());
-        model.addAttribute("inspectorName", myUser.getInspector().getFirstName());
-        return "app/site/sitechoice";
-    }
-//    @PostMapping("/2")
-//    public RedirectView setSiteIdInSessionAndRedirectToApp
-//            (@RequestParam(value="siteId") Long siteId, @AuthenticationPrincipal CurrentUser customUser, Model model, HttpSession session) {
-//        session.setAttribute("siteId", siteId);
-//        return new RedirectView("/app");
-//    }
 
-    @GetMapping("/2/site/add")
-    public String addSite(@AuthenticationPrincipal CurrentUser customUser, Model model) {
-        model.addAttribute("siteForm", new Site());
-        return "app/site/siteadd";
-    }
-
-    @PostMapping("/2/site/add")
-    public RedirectView addSitePost(@ModelAttribute("siteForm") Site siteForm, Model model, @AuthenticationPrincipal CurrentUser customUser) {
-        siteRepository.save(siteForm);
-        User entityUser = customUser.getUser();
-        User myUser = userService.findByUserName(entityUser.getUsername());
-        myUser.getInspector().getSitesList().add(siteForm);
-        userRepository.save(myUser);
-        return new RedirectView("/start/2");
-
-    }
 }

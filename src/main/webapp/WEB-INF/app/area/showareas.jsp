@@ -19,7 +19,10 @@
 
 <c:forEach var="area" items="${areaList}">
   ${area.name}
+    <td><a href="/app/site/${siteId}/area/${area.id}/deletearea">Delete</a></td>
+    <td><a href="/app/site/${siteId}/area/${area.id}/editarea">Edit</a></td>
     <br>
 </c:forEach>
+<a href="/app/site/${siteId}/">Back to dashboard</a>
 </body>
 </html>

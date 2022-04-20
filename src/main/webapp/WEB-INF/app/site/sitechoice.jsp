@@ -11,7 +11,7 @@
 <h2>Hello ${inspectorName}!</h2>
 
 <div>
-    <a href="2/site/add">
+    <a href="../app/site/add">
         <span>Add a site</span>
     </a>
 </div>
@@ -24,7 +24,7 @@
             <select onclick="location = this.value;">
                 <option value="disabled" disabled>Choose a site:</option>
             <c:forEach var="site" items="${sitesList}">
-                <option value="../app/${site.id}">${site.name}</option>
+                <option value="../app/site/${site.id}">${site.name}</option>
 
             </c:forEach>
             </select>

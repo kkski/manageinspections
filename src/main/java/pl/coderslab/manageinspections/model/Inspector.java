@@ -1,6 +1,9 @@
 package pl.coderslab.manageinspections.model;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.Max;
@@ -11,7 +14,9 @@ import java.util.Set;
 
 @Entity
 @Table(name = "inspectors")
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
 public class Inspector {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

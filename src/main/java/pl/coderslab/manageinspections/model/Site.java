@@ -1,6 +1,9 @@
 package pl.coderslab.manageinspections.model;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
@@ -9,7 +12,9 @@ import java.util.List;
 
 @Entity
 @Table(name = "sites")
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
 public class Site {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,4 +30,6 @@ public class Site {
 
     @OneToMany
     private List<Scaffold> scaffoldList;
+    @OneToMany
+    private List<Inspection> inspectionList;
 }

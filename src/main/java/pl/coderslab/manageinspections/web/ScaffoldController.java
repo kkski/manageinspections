@@ -17,7 +17,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Controller
-@RequestMapping("/app/scaffold")
+@RequestMapping("/app/site/{siteId}/scaffold")
 public class ScaffoldController {
     private final SiteRepository siteRepository;
     private final AreaRepository areaRepository;
@@ -38,12 +38,14 @@ public class ScaffoldController {
     }
 
     @GetMapping("/add")
-    public String addScaffoldForm(@AuthenticationPrincipal CurrentUser customUser, Model model, HttpServletRequest request) {
-        CookieUtil cookieUtil = new CookieUtil();
-        Long siteId = cookieUtil.getSiteIdCookieValue(request);
+    public String addScaffoldForm(@AuthenticationPrincipal CurrentUser customUser,
+                                  Model model,
+                                  @PathVariable("siteId") Long siteId) {
+
         model.addAttribute("scaffoldForm", new ScaffoldDto());
         User entityUser = customUser.getUser();
         User myUser = userService.findByUserName(entityUser.getUsername());
+
         if (siteRepository.existsById(siteId) && myUser.getInspector().getSitesList().contains(siteRepository.getById(siteId))) {
             model.addAttribute("areaList", siteRepository.getById(siteId).getAreasList());
             return "app/scaffold/addscaffold";
@@ -54,17 +56,18 @@ public class ScaffoldController {
     }
 
     @PostMapping("/add")
-    public RedirectView addScaffold(HttpServletRequest request, @ModelAttribute("scaffoldForm") ScaffoldDto scaffoldForm, Model model, @AuthenticationPrincipal CurrentUser customUser) {
-        CookieUtil cookieUtil = new CookieUtil();
+    public RedirectView addScaffold(@PathVariable("siteId") Long siteId,
+                                    @ModelAttribute("scaffoldForm") ScaffoldDto scaffoldForm,
+                                    @AuthenticationPrincipal CurrentUser customUser) {
 
         Scaffold myScaffold = new Scaffold();
         User entityUser = customUser.getUser();
         User myUser = userService.findByUserName(entityUser.getUsername());
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-        Site chosenSite = siteRepository.getById(cookieUtil.getSiteIdCookieValue(request));
+        Site chosenSite = siteRepository.getById(siteId);
 
-        Area chosenArea = areaRepository.getAreaByNameAndSiteId(scaffoldForm.getArea(),chosenSite.getId());
+        Area chosenArea = areaRepository.getAreaByNameAndSiteId(scaffoldForm.getArea(), chosenSite.getId());
 
         myScaffold.setSite(chosenSite);
         myScaffold.setName(scaffoldForm.getName());
@@ -79,14 +82,13 @@ public class ScaffoldController {
         scaffoldRepository.save(myScaffold);
 
         userRepository.save(myUser);
-        return new RedirectView("/app/scaffold/showscaffolds");
+        return new RedirectView("/app/site/{siteId}/scaffold/showscaffolds");
 
     }
 
     @GetMapping("/showscaffolds")
-    public String showScaffolds(@AuthenticationPrincipal CurrentUser customUser, Model model, HttpServletRequest request) {
-        CookieUtil cookieUtil = new CookieUtil();
-        Long siteId = cookieUtil.getSiteIdCookieValue(request);
+    public String showScaffolds(@AuthenticationPrincipal CurrentUser customUser, Model model, @PathVariable("siteId") Long siteId) {
+
         User entityUser = customUser.getUser();
         User myUser = userService.findByUserName(entityUser.getUsername());
 
@@ -98,12 +100,19 @@ public class ScaffoldController {
         }
     }
 
-    @GetMapping("/detailsscaffold/{scaffId}")
-    public String showScaffoldDetails(@AuthenticationPrincipal CurrentUser customUser, Model model, @PathVariable("scaffId") Long scaffId) {
+    @GetMapping("/{scaffId}/detailsscaffold")
+    public String showScaffoldDetails(@AuthenticationPrincipal CurrentUser customUser,
+                                      Model model,
+                                      @PathVariable("scaffId") Long scaffId,
+                                        @PathVariable("siteId") Long siteId)
+
+    {
         Scaffold myScaffold = scaffoldRepository.getById(scaffId);
         List<Inspection> inspectionList = inspectionRepository.getAllByScaffoldId(scaffId);
+
         model.addAttribute("scaff", myScaffold);
         model.addAttribute("inspectionList", inspectionList);
+        model.addAttribute("siteId", siteId);
         return "app/scaffold/detailsscaffold";
     }
 }

@@ -25,6 +25,7 @@
         <th>Foreman name</th>
         <th>Date of erection:</th>
         <th>Grade</th>
+        <th>Approval</th>
     </tr>
 
 <%--<form:form method="POST" modelAttribute="employee">--%>
@@ -37,7 +38,8 @@
             <td>${scaff.foremanName}</td>
             <td>${scaff.dateOfErection}</td>
             <td>${scaff.scaffoldGrade}</td>
-            <td><a href="/app/scaffold/detailsscaffold/${scaff.id}">Details</a></td>
+            <td>${scaff.approval}</td>
+            <td><a href="/app/site/${siteId}/scaffold/${scaff.id}/detailsscaffold">Details</a></td>
         </tr>
 <%--</form>--%>
 <%--        <form:form method="POST" modelAttribute="site" class="form-signin">--%>
@@ -56,7 +58,7 @@
 
 </table>
 <div>
-    <a href="/app">
+    <a href="/app/site/${siteId}">
         <span>Return to dashboard</span>
     </a>
 </div>

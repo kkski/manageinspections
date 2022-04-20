@@ -13,5 +13,6 @@ public interface InspectionRepository extends JpaRepository<Inspection, Long> {
 
     Inspection getFirstByScaffoldId(Long scaffId);
     List<Inspection> getAllByScaffoldId(Long scaffId);
+    List<Inspection> getALlBySiteId(Long siteId);
 }
 

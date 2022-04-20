@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 @Controller
-@RequestMapping("/app/inspection")
+@RequestMapping("/app/site/{siteId}/scaffold/{scaffId}/inspection")
 public class InspectionController {
     private final SiteRepository siteRepository;
     private final AreaRepository areaRepository;
@@ -38,10 +38,12 @@ public class InspectionController {
         this.inspectionRepository = inspectionRepository;
     }
 
-    @GetMapping("/add/{scaffId}")
-    public String addInspectionForm(@PathVariable("scaffId") Long scaffId, @AuthenticationPrincipal CurrentUser customUser, Model model, HttpServletRequest request) {
-        CookieUtil cookieUtil = new CookieUtil();
-        Long siteId = cookieUtil.getSiteIdCookieValue(request);
+    @GetMapping("/add")
+    public String addInspectionForm(@PathVariable("scaffId") Long scaffId,
+                                    @PathVariable("siteId") Long siteId,
+                                    @AuthenticationPrincipal CurrentUser customUser,
+                                    Model model
+    ) {
 
         User entityUser = customUser.getUser();
         User myUser = userService.findByUserName(entityUser.getUsername());
@@ -56,15 +58,17 @@ public class InspectionController {
 
     }
 
-    @PostMapping("/add/{scaffId}")
-    public RedirectView addInspection(@PathVariable("scaffId") Long scaffId, HttpServletRequest request, @ModelAttribute("inspectionForm") InspectionDto inspectionForm, Model model, @AuthenticationPrincipal CurrentUser customUser) {
-        CookieUtil cookieUtil = new CookieUtil();
+    @PostMapping("/add")
+    public RedirectView addInspection(@ModelAttribute("inspectionForm") InspectionDto inspectionForm,
+                                      @PathVariable("scaffId") Long scaffId,
+                                      @PathVariable("siteId") Long siteId,
+                                      @AuthenticationPrincipal CurrentUser customUser,
+                                      Model model) {
 
         Inspection myInspection = new Inspection();
         User entityUser = customUser.getUser();
         User myUser = userService.findByUserName(entityUser.getUsername());
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-
 
         Scaffold chosenScaffold = scaffoldRepository.getById(scaffId);
 
@@ -75,11 +79,13 @@ public class InspectionController {
         myInspection.setInspector(myUser.getInspector());
         myInspection.setInspectionMessage(inspectionForm.getInspectionMessage());
         myInspection.setApproved(inspectionForm.getApproved());
+        myInspection.setSite(siteRepository.getById(siteId));
 
         inspectionRepository.save(myInspection);
-        chosenScaffold.getInspectionsList().add(myInspection);
+        chosenScaffold.checkApproval();
         scaffoldRepository.save(chosenScaffold);
-        return new RedirectView("/app/scaffold/showscaffolds");
+        siteRepository.getById(siteId).getInspectionList().add(myInspection);
+        return new RedirectView("/app/site/{siteId}/scaffold/{scaffId}/detailsscaffold");
 
     }
 
