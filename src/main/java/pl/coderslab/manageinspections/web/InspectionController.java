@@ -64,7 +64,8 @@ public class InspectionController {
     }
 
     @PostMapping("/add")
-    public RedirectView addInspection(@ModelAttribute("inspectionForm") InspectionDto inspectionForm,
+    public String addInspection(@Valid @ModelAttribute("inspectionForm") InspectionDto inspectionForm,
+                                      BindingResult bindingResult,
                                       @PathVariable("scaffId") Long scaffId,
                                       @PathVariable("siteId") Long siteId,
                                       @AuthenticationPrincipal CurrentUser customUser) {
@@ -73,7 +74,11 @@ public class InspectionController {
         User myUser = userService.findByUserName(entityUser.getUsername());
 
         if (!securityService.hasAccess(myUser.getId(), siteId)) {
-            return new RedirectView("/404");
+            return "redirect:/404";
+        }
+
+        if (bindingResult.hasErrors()) {
+            return "app/inspection/addinspection";
         }
 
         Inspection myInspection = new Inspection();
@@ -103,7 +108,7 @@ public class InspectionController {
 
         scaffoldRepository.save(chosenScaffold);
         siteRepository.getById(siteId).getInspectionList().add(myInspection);
-        return new RedirectView("/app/site/{siteId}/scaffold/{scaffId}/detailsscaffold");
+        return "redirect:/app/site/{siteId}/scaffold/{scaffId}/detailsscaffold";
 
     }
 

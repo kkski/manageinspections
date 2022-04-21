@@ -6,6 +6,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.List;
 
 @Entity
@@ -20,6 +23,9 @@ public class Area {
 
     @ManyToOne
     private Site site;
+    @Size(min = 2, message = "Provide a name, minimum 2 characters.")
+    @NotEmpty(message = "You must provide a name.")
+    @NotNull(message = "You must provide a name.")
     private String name;
     @OneToMany
             (

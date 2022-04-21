@@ -16,7 +16,7 @@
 </head>
 <body>
 
-<a href="/app/site/${siteId}/area/">
+<a href="/app/site/${siteId}/area/add">
     <span>Add an area</span>
 </a>
 
