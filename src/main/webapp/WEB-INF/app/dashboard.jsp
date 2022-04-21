@@ -28,8 +28,8 @@
     </a>
 </div>
 <div class="child">
-    <a href="/app/site/${chosenSite.id}/area/add">
-        <span>Add an area</span>
+    <a href="/app/site/${chosenSite.id}/area/showareas">
+        <span>Manage areas</span>
     </a>
 </div>
 </div>
@@ -38,6 +38,9 @@
 
 <div>
 <p>There are ${scaffoldListCount} scaffolds on this site.</p>
+    <p>There are ${unapprovedScaffoldsCount} unapproved scaffolds on this site.
+        <a href="/app/site/${chosenSite.id}/scaffold/showunapproved"><h5>See report</h5></a></p>
+    <p>There are ${approvedScaffoldsCount} approved scaffolds on this site.</p>
 
 
 </div>

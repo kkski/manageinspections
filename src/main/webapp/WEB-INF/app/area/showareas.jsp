@@ -15,6 +15,11 @@
  <title>List of areas</title>
 </head>
 <body>
+
+<a href="/app/site/${siteId}/area/">
+    <span>Add an area</span>
+</a>
+
 <h2>Areas list</h2>
 
 <c:forEach var="area" items="${areaList}">

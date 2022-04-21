@@ -114,6 +114,19 @@ public class ScaffoldController {
 
     }
 
+    @GetMapping("/showunapproved")
+    public String showUnapprovedScaffolds(@AuthenticationPrincipal CurrentUser customUser, Model model, @PathVariable("siteId") Long siteId) {
+        User entityUser = customUser.getUser();
+        User myUser = userService.findByUserName(entityUser.getUsername());
+
+        if (!securityService.hasAccess(myUser.getId(), siteId)) {
+            return "admin/403";
+        }
+        List<Scaffold> unapprovedScaffolds = scaffoldRepository.getAllBySiteIdAndApprovalOrderByAreaName(siteId, false);
+        model.addAttribute("unapprovedScaffolds", unapprovedScaffolds);
+        return "app/scaffold/unapprovedscaffolds";
+    }
+
     @GetMapping("/{scaffId}/detailsscaffold")
     public String showScaffoldDetails(@AuthenticationPrincipal CurrentUser customUser,
                                       Model model,

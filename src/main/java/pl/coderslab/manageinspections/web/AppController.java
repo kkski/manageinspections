@@ -111,9 +111,9 @@ public class AppController {
             model.addAttribute("lastInspectedArea", lastInspectedArea);
         }
         model.addAttribute("scaffoldListCount", scaffoldRepository.getAllBySiteId(siteId).size());
-
+        model.addAttribute("approvedScaffoldsCount", scaffoldRepository.getAllBySiteIdAndApproval(siteId, true).size());
+        model.addAttribute("unapprovedScaffoldsCount", scaffoldRepository.getAllBySiteIdAndApproval(siteId, false).size());
         model.addAttribute("chosenSite", siteRepository.getById(siteId));
-
         model.addAttribute("inspectorName", myUser.getInspector().getFirstName());
 
         return "app/dashboard";
