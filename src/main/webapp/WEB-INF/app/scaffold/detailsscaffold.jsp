@@ -29,6 +29,9 @@
         </tr>
 </table>
 <hr>
+<td><a href="/app/site/${siteId}/scaffold/${scaff.id}/detailsscaffold/delete">Delete scaffold</a></td>
+<td><a href="/app/site/${siteId}/scaffold/${scaff.id}/detailsscaffold/edit">Edit scaffold</a></td>
+<hr>
 <div>
     <a href="/app/site/${siteId}/scaffold/${scaff.id}/inspection/add/">
         <span>Add an inspection</span>
