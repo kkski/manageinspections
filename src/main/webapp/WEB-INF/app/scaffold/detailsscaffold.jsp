@@ -49,6 +49,8 @@
                 <td>${inspection.dateOfInspection}</td>
                 <td>${inspection.inspectionMessage}</td>
                 <td>${inspection.approved}</td>
+                <td><a href="/app/site/${siteId}/scaffold/${scaff.id}/inspection/${inspection.id}/delete">Delete inspection</a></td>
+                <td><a href="/app/site/${siteId}/scaffold/${scaff.id}/inspection/${inspection.id}/edit">Edit inspection</a></td>
             </tr>
         </c:forEach>
 

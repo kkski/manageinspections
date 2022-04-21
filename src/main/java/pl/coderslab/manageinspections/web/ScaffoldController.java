@@ -156,7 +156,7 @@ public class ScaffoldController {
     }
 
     @GetMapping("/{scaffId}/detailsscaffold/delete/confirm")
-    public RedirectView deleteArea(@AuthenticationPrincipal CurrentUser customUser,
+    public RedirectView deleteScaffold(@AuthenticationPrincipal CurrentUser customUser,
                                    @PathVariable("siteId") Long siteId,
                                    @PathVariable("scaffId") Long scaffId) {
 
