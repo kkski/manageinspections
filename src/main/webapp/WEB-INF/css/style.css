@@ -55,6 +55,8 @@ button:focus { outline: none; }
 h1, h2, h3, h4, h5, h6 { color: #333; }
 
 .container-fluid {
+    display:flex;
+    flex-direction: column;
     max-width: 1210px;
     margin-left: auto;
     margin-right: auto;
@@ -81,7 +83,7 @@ h1, h2, h3, h4, h5, h6 { color: #333; }
 
 .tm-site-header {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     align-items: center;
     justify-content: space-between;
     height: 210px;

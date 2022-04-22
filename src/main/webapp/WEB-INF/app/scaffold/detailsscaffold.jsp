@@ -53,6 +53,7 @@
                     <tr><td><b>Approval:</b> ${scaff.approval}</td></tr>
                 </tr>
             </table>
+
             <hr>
 
             <div>
@@ -87,12 +88,13 @@
 
             </table>
         </div>
+        <footer class="text-center tm-mb-1">
+            <p><a href="github.com/kkski">github.com/kkski</a></p>
+        </footer>
     </div>
 
 
-    <footer class="text-center tm-mb-1">
-        <p><a href="github.com/kkski">github.com/kkski</a></p>
-    </footer>
+
 </div>
 
 

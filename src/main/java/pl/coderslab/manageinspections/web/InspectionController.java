@@ -9,7 +9,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 import pl.coderslab.manageinspections.dtos.InspectionDto;
 import pl.coderslab.manageinspections.model.*;
-import pl.coderslab.manageinspections.model.ScaffoldDto;
 import pl.coderslab.manageinspections.repository.*;
 import pl.coderslab.manageinspections.service.CurrentUser;
 import pl.coderslab.manageinspections.service.SecurityService;
@@ -106,9 +105,10 @@ public class InspectionController {
         inspectionRepository.save(myInspection);
 
 
-        Inspection lastInspection = inspectionRepository.getFirstByScaffoldIdOrderByDateOfInspection(scaffId);
-
-        if (myInspection.getDateOfInspection().isAfter(lastInspection.getDateOfInspection())) {
+        Inspection lastInspection = inspectionRepository.getFirstByScaffoldIdOrderByDateOfInspectionDesc(scaffId);
+        if (myInspection == lastInspection) {
+            chosenScaffold.setApproval(myInspection.isApproved());
+        } else if (myInspection.getDateOfInspection().isAfter(lastInspection.getDateOfInspection())) {
             if (myInspection.getDateOfInspection().isAfter(LocalDate.now().minusDays(7)) && myInspection.isApproved()) {
                 chosenScaffold.setApproval(true);
             } else {
@@ -163,13 +163,13 @@ public class InspectionController {
         siteRepository.getById(siteId).getInspectionList().remove(inspectionToRemove);
         inspectionRepository.delete(inspectionToRemove);
 
-        Inspection lastInspection = inspectionRepository.getFirstByScaffoldIdOrderByDateOfInspection(chosenScaffold.getId());
+        Inspection lastInspection = inspectionRepository.getFirstByScaffoldIdOrderByDateOfInspectionDesc(chosenScaffold.getId());
 
         if (chosenScaffold.getInspectionsList().isEmpty()) {
             chosenScaffold.setApproval(false);
         } else {
             if (lastInspection.isApproved()) {
-                if (lastInspection.getDateOfInspection().isAfter(LocalDate.now().minusDays(7))) {
+                if (lastInspection.getDateOfInspection().isBefore(LocalDate.now().minusDays(7))) {
                     chosenScaffold.setApproval(true);
                 } else {
                     chosenScaffold.setApproval(false);

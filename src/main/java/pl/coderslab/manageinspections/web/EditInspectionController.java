@@ -107,14 +107,17 @@ public class EditInspectionController {
 
         inspectionRepository.save(myInspection);
 
-        Inspection lastInspection = inspectionRepository.getFirstByScaffoldIdOrderByDateOfInspection(scaffId);
-
-        if (myInspection.getDateOfInspection().isAfter(lastInspection.getDateOfInspection())) {
+        Inspection lastInspection = inspectionRepository.getFirstByScaffoldIdOrderByDateOfInspectionDesc(scaffId);
+        if (myInspection == lastInspection) {
+            chosenScaffold.setApproval(myInspection.isApproved());
+        } else if (myInspection.getDateOfInspection().isAfter(lastInspection.getDateOfInspection())) {
             if (myInspection.getDateOfInspection().isAfter(LocalDate.now().minusDays(7)) && myInspection.isApproved()) {
                 chosenScaffold.setApproval(true);
             } else {
                 chosenScaffold.setApproval(false);
             }
+        } else {
+            chosenScaffold.setApproval(lastInspection.isApproved());
         }
 
 

@@ -51,7 +51,6 @@ public class Scaffold {
             )
     private List<Inspection> inspectionsList = new ArrayList<Inspection>();
     @Size(min = 5)
-    @Column(unique = true)
     private String scaffoldId;
     @ManyToOne
     private Site site;

@@ -82,12 +82,13 @@
                 <button type="submit" class="inputLogin">Submit</button>
             </form:form>
         </div>
+        <footer class="text-center tm-mb-1">
+            <p><a href="github.com/kkski">github.com/kkski</a></p>
+        </footer>
     </div>
 
 
-    <footer class="text-center tm-mb-1">
-        <p><a href="github.com/kkski">github.com/kkski</a></p>
-    </footer>
+
 </div>
 
 </body>

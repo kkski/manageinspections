@@ -31,12 +31,14 @@
                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
             </form>
         </div>
+
+        <footer class="text-center tm-mb-1">
+            <p>github.com/kkski</p>
+        </footer>
+
     </div>
 
 
-    <footer class="text-center tm-mb-1">
-        <p>Created in 2022.</p>
-    </footer>
 </div>
 
 

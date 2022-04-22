@@ -18,13 +18,13 @@
         </div>
         <div class="tm-nav-container tm-bg-color-8">
 
-            <div class="nav-item inputLogin">
+            <div class="nav-item inputLogin text-center">
                         <a href="/login" class="tm-nav-link">
                             <span class="tm-mb-1">Login</span>
                         </a>
             </div>
 
-            <div class="nav-item inputLogin">
+            <div class="nav-item inputLogin text-center">
                         <a href="/register" class="tm-nav-link">
                             <span class="tm-mb-1">Register</span>
                         </a>

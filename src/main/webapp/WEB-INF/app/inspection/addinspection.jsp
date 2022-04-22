@@ -17,12 +17,12 @@
 <div class="container-fluid">
     <div class="tm-site-header tm-mb-1">
         <div class="tm-em-box tm-bg-color-1">
-            <h2>Create a new scaffold</h2>
+            <h2>Create a new inspection</h2>
         </div>
         <div class="tm-nav-container tm-bg-color-8">
             <div class="nav-item">
-                <a href="/app/site/${siteId}/">
-                    <span>Back to dashboard</span>
+                <a href="/app/site/${site.id}/scaffold/${scaff.id}/detailsscaffold">
+                    <span>Back to scaffold</span>
                 </a>
             </div>
         </div>
@@ -47,7 +47,7 @@
                     </tr>
 
             </table>
-
+            <hr>
 
 
             <form:form method="POST" modelAttribute="inspectionForm" class="form-signin" action="">
@@ -82,12 +82,13 @@
                 <button type="submit" class="inputLogin">Submit</button>
             </form:form>
         </div>
+        <footer class="text-center tm-mb-1">
+            <p><a href="github.com/kkski">github.com/kkski</a></p>
+        </footer>
     </div>
 
 
-    <footer class="text-center tm-mb-1">
-        <p><a href="github.com/kkski">github.com/kkski</a></p>
-    </footer>
+
 </div>
 
 
