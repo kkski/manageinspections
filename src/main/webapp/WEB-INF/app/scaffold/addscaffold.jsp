@@ -83,7 +83,7 @@
                         <form:select path="area" class="inputLogin">
                             <form:option value="NONE">--SELECT--</form:option>
                             <c:forEach var="area" items="${areaList}">
-                                <form:option value="${area.name}">${area.name}</form:option>
+                                <form:option value="${area.name}" class="inputLogin">${area.name}</form:option>
                             </c:forEach>
                         </form:select>
                     </div>

@@ -18,7 +18,7 @@
         <div class="tm-em-box tm-bg-color-1">
             <h2>Site: ${chosenSite.name}</h2>
         </div>
-        <div class="tm-em-box tm-bg-color-8">
+        <div class="tm-nav-container tm-bg-color-8">
 
                <div class="nav-item">
                    <a href="/app/site">
@@ -49,16 +49,16 @@
         <div class="tm-em-box tm-bg-color-8">
             <div>
                 <p>There are ${scaffoldListCount} scaffolds on this site.</p>
-                <p>There are ${unapprovedScaffoldsCount} unapproved scaffolds on this site. <a href="/app/site/${chosenSite.id}/scaffold/showunapproved"><h5>See unapproved scaffolds</h5></a></p>
+                <p>There are ${unapprovedScaffoldsCount} unapproved scaffolds on this site. <a href="/app/site/${chosenSite.id}/scaffold/showunapproved">See unapproved scaffolds</a></p>
                 <p>There are ${approvedScaffoldsCount} approved scaffolds on this site.</p>
             </div>
             <c:if test="${empty lastAddedInspection}">
                 There is no inspection yet! Add one to see info on dashboard.
             </c:if>
             <c:if test="${not empty lastAddedInspection}">
-                <div>
+                <div class="text-center">
                     <p>Last added inspection was on ${lastAddedInspection.dateOfInspection}, on ${lastInspectedArea.name} zone.</p>
-                    <p>Inspected scaffold: ${lastInspectedScaffold.name}</p>
+                    <p>Inspected scaffold: ${lastInspectedScaffold.name}, Id: ${lastInspectedScaffold.scaffoldId}</p>
                     <p>Note: ${lastAddedInspection.inspectionMessage}</p>
                     <p>Approval: ${lastAddedInspection.approved}</p>
                 </div>

@@ -25,17 +25,15 @@ public class ScaffoldController {
     private final SiteRepository siteRepository;
     private final AreaRepository areaRepository;
     private final UserRepository userRepository;
-    private final InspectorRepository inspectorRepository;
     private final UserService userService;
     private final ScaffoldRepository scaffoldRepository;
     private final InspectionRepository inspectionRepository;
-    private SecurityService securityService;
+    private final SecurityService securityService;
 
-    public ScaffoldController(SiteRepository siteRepository, AreaRepository areaRepository, UserRepository userRepository, InspectorRepository inspectorRepository, UserService userService, ScaffoldRepository scaffoldRepository, InspectionRepository inspectionRepository, SecurityService securityService) {
+    public ScaffoldController(SiteRepository siteRepository, AreaRepository areaRepository, UserRepository userRepository, UserService userService, ScaffoldRepository scaffoldRepository, InspectionRepository inspectionRepository, SecurityService securityService) {
         this.siteRepository = siteRepository;
         this.areaRepository = areaRepository;
         this.userRepository = userRepository;
-        this.inspectorRepository = inspectorRepository;
         this.userService = userService;
         this.scaffoldRepository = scaffoldRepository;
         this.inspectionRepository = inspectionRepository;
@@ -45,6 +43,10 @@ public class ScaffoldController {
     public void init(Model model,
                      @PathVariable("siteId") Long siteId) {
         model.addAttribute("areaList", areaRepository.getAllBySiteId(siteId));
+        model.addAttribute("scaffoldForm", new ScaffoldDto());
+        model.addAttribute("site", siteRepository.getById(siteId));
+
+
 
     }
 
@@ -103,12 +105,15 @@ public class ScaffoldController {
 
         userRepository.save(myUser);
 
+
         return "redirect:/app/site/{siteId}/scaffold/showscaffolds";
 
     }
 
     @GetMapping("/showscaffolds")
-    public String showScaffolds(@AuthenticationPrincipal CurrentUser customUser, Model model, @PathVariable("siteId") Long siteId) {
+    public String showScaffolds(@AuthenticationPrincipal CurrentUser customUser,
+                                Model model,
+                                @PathVariable("siteId") Long siteId) {
         User entityUser = customUser.getUser();
         User myUser = userService.findByUserName(entityUser.getUsername());
 
@@ -131,7 +136,7 @@ public class ScaffoldController {
         }
         List<Scaffold> unapprovedScaffolds = scaffoldRepository.getAllBySiteIdAndApprovalOrderByAreaName(siteId, false);
         model.addAttribute("unapprovedScaffolds", unapprovedScaffolds);
-        return "app/scaffold/showunapproved";
+        return "app/scaffold/unapprovedscaffolds";
     }
 
     @GetMapping("/{scaffId}/detailsscaffold")
@@ -150,8 +155,8 @@ public class ScaffoldController {
         Scaffold myScaffold = scaffoldRepository.getById(scaffId);
         List<Inspection> inspectionList = inspectionRepository.getAllByScaffoldId(scaffId);
 
-        model.addAttribute("scaff", myScaffold);
         model.addAttribute("inspectionList", inspectionList);
+        model.addAttribute("scaff", myScaffold);
         model.addAttribute("siteId", siteId);
         return "app/scaffold/detailsscaffold";
     }
@@ -194,68 +199,4 @@ public class ScaffoldController {
 
     }
 
-    @GetMapping("/{scaffId}/detailsscaffold/edit")
-    public String editScaffoldForm(@AuthenticationPrincipal CurrentUser customUser,
-                                   Model model,
-                                   @PathVariable("siteId") Long siteId,
-                                   @PathVariable("scaffId") Long scaffId) {
-
-        User entityUser = customUser.getUser();
-        User myUser = userService.findByUserName(entityUser.getUsername());
-
-        if (!securityService.hasAccess(myUser.getId(), siteId)) {
-            return "admin/403";
-        }
-
-        model.addAttribute("scaffoldForm", new ScaffoldDto());
-        model.addAttribute("site", siteRepository.getById(siteId));
-        model.addAttribute("areaList", siteRepository.getById(siteId).getAreasList());
-        model.addAttribute("scaff", scaffoldRepository.getById(scaffId));
-        return "app/scaffold/editscaffold";
-
-    }
-
-    @PostMapping("/{scaffId}/detailsscaffold/edit")
-    public String editScaffold(@Valid @ModelAttribute("scaffoldForm") ScaffoldDto scaffoldForm,
-                               BindingResult bindingResult,
-                               @AuthenticationPrincipal CurrentUser customUser,
-                               @PathVariable("siteId") Long siteId,
-                               @PathVariable("scaffId") Long scaffId
-    ) {
-
-        User entityUser = customUser.getUser();
-        User myUser = userService.findByUserName(entityUser.getUsername());
-
-        if (!securityService.hasAccess(myUser.getId(), siteId)) {
-            return "admin/403";
-        }
-
-        if (bindingResult.hasErrors()) {
-            return "app/scaffold/editscaffold";
-        }
-
-
-        Scaffold myScaffold = scaffoldRepository.getById(scaffId);
-
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-
-        Site chosenSite = siteRepository.getById(siteId);
-        Area chosenArea = areaRepository.getAreaByNameAndSiteId(scaffoldForm.getArea(), chosenSite.getId());
-
-        myScaffold.setSite(chosenSite);
-        myScaffold.setName(scaffoldForm.getName());
-        myScaffold.setErectorName(scaffoldForm.getErectorName());
-        myScaffold.setForemanName(scaffoldForm.getForemanName());
-        myScaffold.setScaffoldGrade(scaffoldForm.getScaffoldGrade());
-        myScaffold.setArea(chosenArea);
-        LocalDate dateOfCreation = LocalDate.parse(scaffoldForm.getDateOfErection(), formatter);
-        myScaffold.setDateOfErection(dateOfCreation);
-        myScaffold.setScaffoldId(scaffoldForm.getScaffoldId());
-
-        scaffoldRepository.save(myScaffold);
-
-        return "redirect:app/site/${siteId}/scaffold/showscaffolds";
-
-
-    }
 }

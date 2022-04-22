@@ -38,7 +38,7 @@
 
                 </tr>
             </table>
-            <h3>By choosing yes you will delete all scaffolds assosciated with it.</h3>
+            <h3>By choosing yes you will delete all scaffolds associated with it.</h3>
             <hr>
             <p class="inputLogin nav-item"><a href="/app/site/${site.id}/area/${area.id}/deletearea/confirm">Yes</a></p>
             <p class="inputLogin nav-item"><a href="/app/site/${site.id}/area/showareas">No, back to list</a></p>

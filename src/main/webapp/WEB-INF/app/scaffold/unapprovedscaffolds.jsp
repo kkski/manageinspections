@@ -10,57 +10,58 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <c:set var="contextPath" value="${pageContext.request.contextPath}"/>
+<style><%@include file="/WEB-INF/css/style.css"%></style>
 <html>
 <head>
-    <title>List of unapproved scaffolds</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>Unapproved scaffolds</title>
 </head>
 <body>
-<h2>Unapproved scaffolds list</h2>
-<table>
-    <tr>
-        <th>ScaffId</th>
-        <th>Name</th>
-        <th>Area</th>
-        <th>Builder name</th>
-        <th>Foreman name</th>
-        <th>Date of erection:</th>
-        <th>Grade</th>
-        <th>Approval</th>
-    </tr>
 
-<%--<form:form method="POST" modelAttribute="employee">--%>
-    <c:forEach var="scaff" items="${unapprovedScaffolds}">
-        <tr>
-            <td>${scaff.scaffoldId}</td>
-            <td>${scaff.name}</td>
-            <td>${scaff.area.name}</td>
-            <td>${scaff.erectorName}</td>
-            <td>${scaff.foremanName}</td>
-            <td>${scaff.dateOfErection}</td>
-            <td>${scaff.scaffoldGrade}</td>
-            <td>${scaff.approval}</td>
-            <td><a href="/app/site/${siteId}/scaffold/${scaff.id}/detailsscaffold">Details</a></td>
-        </tr>
-<%--</form>--%>
-<%--        <form:form method="POST" modelAttribute="site" class="form-signin">--%>
-<%--            <spring:bind path="scaffoldId">--%>
-<%--    <div class="form-group ${status.error ? 'has-error' : ''}">--%>
-<%--                    <form:hidden path="scaffold" value = "${scaff.id}"/>--%>
-<%--    </div>--%>
+<div class="container-fluid">
+    <div class="tm-site-header tm-mb-1">
+        <div class="tm-nav-container tm-bg-color-8">
 
-<%--            </spring:bind>--%>
-<%--            <button type="submit">Choose</button>--%>
-<%--        </form:form>--%>
+            <div class="nav-item">
+                <a href="/app/site/${siteId}/">
+                    <span>Back to dashboard</span>
+                </a>
+            </div>
 
 
-    </c:forEach>
-</form>
+        </div>
+        <div class="tm-em-box tm-bg-color-8">
+            <h2>Unapproved scaffolds</h2>
+            <table>
+                <tr>
+                    <th>ScaffId</th>
+                    <th>Name</th>
+                    <th>Area</th>
+                    <th>Date of erection:</th>
+                    <th>Approval</th>
+                </tr>
+                <c:forEach var="scaff" items="${unapprovedScaffolds}">
+                    <tr>
+                        <td>${scaff.scaffoldId}</td>
+                        <td>${scaff.name}</td>
+                        <td>${scaff.area.name}</td>
+                        <td>${scaff.dateOfErection}</td>
+                        <td><a href="/app/site/${siteId}/scaffold/${scaff.id}/detailsscaffold">Manage</a></td>
+                    </tr>
+                </c:forEach>
+                </form>
 
-</table>
-<div>
-    <a href="/app/site/${siteId}">
-        <span>Return to dashboard</span>
-    </a>
+            </table>
+        </div>
+    </div>
+
+
+    <footer class="text-center tm-mb-1">
+        <p><a href="github.com/kkski">github.com/kkski</a></p>
+    </footer>
 </div>
 </body>
 </html>
