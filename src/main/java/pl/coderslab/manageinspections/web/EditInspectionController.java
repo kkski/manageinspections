@@ -10,9 +10,7 @@ import pl.coderslab.manageinspections.model.Inspection;
 import pl.coderslab.manageinspections.model.Scaffold;
 import pl.coderslab.manageinspections.model.User;
 import pl.coderslab.manageinspections.repository.*;
-import pl.coderslab.manageinspections.service.CurrentUser;
-import pl.coderslab.manageinspections.service.SecurityService;
-import pl.coderslab.manageinspections.service.UserService;
+import pl.coderslab.manageinspections.service.*;
 
 import javax.validation.Valid;
 import java.time.LocalDate;
@@ -27,13 +25,15 @@ public class EditInspectionController {
     private final ScaffoldRepository scaffoldRepository;
     private final InspectionRepository inspectionRepository;
     private final SecurityService securityService;
+    private final ApproveService approveService;
 
-    public EditInspectionController(SiteRepository siteRepository, UserService userService, ScaffoldRepository scaffoldRepository, InspectionRepository inspectionRepository, SecurityService securityService) {
+    public EditInspectionController(SiteRepository siteRepository, UserService userService, ScaffoldRepository scaffoldRepository, InspectionRepository inspectionRepository, SecurityService securityService, ApproveService approveService) {
         this.siteRepository = siteRepository;
         this.userService = userService;
         this.scaffoldRepository = scaffoldRepository;
         this.inspectionRepository = inspectionRepository;
         this.securityService = securityService;
+        this.approveService = approveService;
     }
 
     @ModelAttribute
@@ -106,21 +106,7 @@ public class EditInspectionController {
         myInspection.setSite(siteRepository.getById(siteId));
 
         inspectionRepository.save(myInspection);
-
-        Inspection lastInspection = inspectionRepository.getFirstByScaffoldIdOrderByDateOfInspectionDesc(scaffId);
-        if (myInspection == lastInspection) {
-            chosenScaffold.setApproval(myInspection.isApproved());
-        } else if (myInspection.getDateOfInspection().isAfter(lastInspection.getDateOfInspection())) {
-            if (myInspection.getDateOfInspection().isAfter(LocalDate.now().minusDays(7)) && myInspection.isApproved()) {
-                chosenScaffold.setApproval(true);
-            } else {
-                chosenScaffold.setApproval(false);
-            }
-        } else {
-            chosenScaffold.setApproval(lastInspection.isApproved());
-        }
-
-
+        chosenScaffold.setApproval(approveService.isApproved(chosenScaffold));
 
         scaffoldRepository.save(chosenScaffold);
         siteRepository.getById(siteId).getInspectionList().add(myInspection);

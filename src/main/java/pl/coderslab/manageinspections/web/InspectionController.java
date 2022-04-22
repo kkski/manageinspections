@@ -10,6 +10,7 @@ import org.springframework.web.servlet.view.RedirectView;
 import pl.coderslab.manageinspections.dtos.InspectionDto;
 import pl.coderslab.manageinspections.model.*;
 import pl.coderslab.manageinspections.repository.*;
+import pl.coderslab.manageinspections.service.ApproveService;
 import pl.coderslab.manageinspections.service.CurrentUser;
 import pl.coderslab.manageinspections.service.SecurityService;
 import pl.coderslab.manageinspections.service.UserService;
@@ -28,13 +29,15 @@ public class InspectionController {
     private final ScaffoldRepository scaffoldRepository;
     private final InspectionRepository inspectionRepository;
     private final SecurityService securityService;
+    private final ApproveService approveService;
 
-    public InspectionController(SiteRepository siteRepository, UserService userService, ScaffoldRepository scaffoldRepository, InspectionRepository inspectionRepository, SecurityService securityService) {
+    public InspectionController(SiteRepository siteRepository, UserService userService, ScaffoldRepository scaffoldRepository, InspectionRepository inspectionRepository, SecurityService securityService, ApproveService approveService) {
         this.siteRepository = siteRepository;
         this.userService = userService;
         this.scaffoldRepository = scaffoldRepository;
         this.inspectionRepository = inspectionRepository;
         this.securityService = securityService;
+        this.approveService = approveService;
     }
 
     @ModelAttribute
@@ -104,18 +107,7 @@ public class InspectionController {
 
         inspectionRepository.save(myInspection);
 
-
-        Inspection lastInspection = inspectionRepository.getFirstByScaffoldIdOrderByDateOfInspectionDesc(scaffId);
-        if (myInspection == lastInspection) {
-            chosenScaffold.setApproval(myInspection.isApproved());
-        } else if (myInspection.getDateOfInspection().isAfter(lastInspection.getDateOfInspection())) {
-            if (myInspection.getDateOfInspection().isAfter(LocalDate.now().minusDays(7)) && myInspection.isApproved()) {
-                chosenScaffold.setApproval(true);
-            } else {
-                chosenScaffold.setApproval(false);
-            }
-        }
-
+        chosenScaffold.setApproval(approveService.isApproved(chosenScaffold));
 
 
         scaffoldRepository.save(chosenScaffold);
@@ -163,21 +155,7 @@ public class InspectionController {
         siteRepository.getById(siteId).getInspectionList().remove(inspectionToRemove);
         inspectionRepository.delete(inspectionToRemove);
 
-        Inspection lastInspection = inspectionRepository.getFirstByScaffoldIdOrderByDateOfInspectionDesc(chosenScaffold.getId());
-
-        if (chosenScaffold.getInspectionsList().isEmpty()) {
-            chosenScaffold.setApproval(false);
-        } else {
-            if (lastInspection.isApproved()) {
-                if (lastInspection.getDateOfInspection().isBefore(LocalDate.now().minusDays(7))) {
-                    chosenScaffold.setApproval(true);
-                } else {
-                    chosenScaffold.setApproval(false);
-                }
-            } else {
-                chosenScaffold.setApproval(false);
-            }
-        }
+        chosenScaffold.setApproval(approveService.isApproved(chosenScaffold));
 
         scaffoldRepository.save(chosenScaffold);
         return new RedirectView("/app/site/{siteId}/scaffold/{scaffId}/detailsscaffold");

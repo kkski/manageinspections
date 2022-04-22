@@ -26,13 +26,13 @@ public class EditScaffoldController {
         private final ScaffoldRepository scaffoldRepository;
         private final SecurityService securityService;
 
-        public EditScaffoldController(SiteRepository siteRepository, AreaRepository areaRepository, UserService userService, ScaffoldRepository scaffoldRepository, SecurityService securityService) {
+    public EditScaffoldController(SiteRepository siteRepository, AreaRepository areaRepository, UserService userService, ScaffoldRepository scaffoldRepository, SecurityService securityService) {
             this.siteRepository = siteRepository;
             this.areaRepository = areaRepository;
             this.userService = userService;
             this.scaffoldRepository = scaffoldRepository;
             this.securityService = securityService;
-        }
+    }
 
     @ModelAttribute
     public void init(Model model,
