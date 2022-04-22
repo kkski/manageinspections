@@ -39,6 +39,11 @@
                 </a>
             </div>
 
+            <div style="padding-top:10px">
+                <a href="../logout">
+                    <span><h2>Logout</h2></span>
+                </a>
+            </div>
         </div>
     </div>
 

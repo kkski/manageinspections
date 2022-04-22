@@ -21,7 +21,7 @@
         </div>
         <div class="tm-nav-container tm-bg-color-8">
             <div class="nav-item">
-                <a href="/app/site/${chosenSite.id}/scaffold/showscaffolds">
+                <a href="/app/site/${site.id}/scaffold/showscaffolds">
                     <span>Back to scaffold list.</span>
                 </a>
             </div>

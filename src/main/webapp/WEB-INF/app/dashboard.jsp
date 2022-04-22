@@ -22,7 +22,7 @@
 
                <div class="nav-item">
                    <a href="/app/site">
-                   <span>Choose another site</span>
+                   <span>Start page</span>
                    </a>
                </div>
 
