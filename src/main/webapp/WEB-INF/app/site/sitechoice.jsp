@@ -3,48 +3,49 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <c:set var="contextPath" value="${pageContext.request.contextPath}"/>
+<style><%@include file="/WEB-INF/css/style.css"%></style>
 <html>
 <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
     <title>Start page</title>
 </head>
 <body>
-<h2>Hello ${inspectorName}!</h2>
 
-<div>
-    <a href="../app/site/add">
-        <span>Add a site</span>
-    </a>
-</div>
-<hr>
-<div>
-    Choose site you work on now:
-</div>
-<div>
+<div class="container-fluid">
+    <div class="tm-site-header tm-mb-1">
+        <div class="tm-site-name-container tm-bg-color-1">
+            <h1 class="tm-text-white">Manage Inspections v0.0.1</h1>
+        </div>
+        <div class="tm-em-box tm-bg-color-8">
+            <h2>Hello ${inspectorName}!</h2>
+            <h2 class="tm-mb-2 tm-title-color">Choose or add a site:</h2>
 
-            <select onclick="location = this.value;">
-                <option value="disabled" disabled>Choose a site:</option>
-            <c:forEach var="site" items="${sitesList}">
-                <option value="../app/site/${site.id}">${site.name}</option>
+            <div>
+                <select class="inputLogin" onchange="location = this.value;">
+                    <option value="../app/site">Choose a site:</option>
+                    <c:forEach var="site" items="${sitesList}">
+                        <option value="../app/site/${site.id}">${site.name}</option>
 
-            </c:forEach>
-            </select>
+                    </c:forEach>
+                </select>
+            </div>
 
+            <div style="padding-top:10px">
+                <a href="../app/site/add">
+                    <span><h2>Add a site</h2></span>
+                </a>
+            </div>
 
-
-
-
-
-<%--    <c:forEach var="site" items="${sitesList}">--%>
-<%--        <form:form method="POST" modelAttribute="siteChosen">--%>
-
-
-<%--            <form:option value="${site.name}" label="#{site.name}"/>--%>
+        </div>
+    </div>
 
 
-<%--            <button type="submit">Choose</button>--%>
-<%--        </form:form>--%>
-
-<%--    </c:forEach>--%>
+    <footer class="text-center tm-mb-1">
+        <p><a href="github.com/kkski">github.com/kkski</a></p>
+    </footer>
 </div>
 
 

@@ -182,7 +182,7 @@ public class AreaController {
         areaToSave.setName(areaForm.getName());
         areaRepository.save(areaToSave);
 
-        return "redirect:app/dashboard";
+        return "redirect:/app/site/{siteId}/area/showareas";
 
 
     }

@@ -10,53 +10,76 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <c:set var="contextPath" value="${pageContext.request.contextPath}"/>
+<style><%@include file="/WEB-INF/css/style.css"%></style>
 <html>
 <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
     <title>List of scaffolds</title>
 </head>
 <body>
-<h2>Scaffolds list</h2>
-<table>
-    <tr>
-        <th>ScaffId</th>
-        <th>Name</th>
-        <th>Area</th>
-        <th>Builder name</th>
-        <th>Foreman name</th>
-        <th>Date of erection:</th>
-        <th>Grade</th>
-        <th>Approval</th>
-    </tr>
 
-<%--<form:form method="POST" modelAttribute="employee">--%>
-    <c:forEach var="scaff" items="${scaffoldList}">
-        <tr>
-            <td>${scaff.scaffoldId}</td>
-            <td>${scaff.name}</td>
-            <td>${scaff.area.name}</td>
-            <td>${scaff.erectorName}</td>
-            <td>${scaff.foremanName}</td>
-            <td>${scaff.dateOfErection}</td>
-            <td>${scaff.scaffoldGrade}</td>
-            <td>${scaff.approval}</td>
-            <td><a href="/app/site/${siteId}/scaffold/${scaff.id}/detailsscaffold">Details</a></td>
-        </tr>
-<%--</form>--%>
-<%--        <form:form method="POST" modelAttribute="site" class="form-signin">--%>
-<%--            <spring:bind path="scaffoldId">--%>
-<%--    <div class="form-group ${status.error ? 'has-error' : ''}">--%>
-<%--                    <form:hidden path="scaffold" value = "${scaff.id}"/>--%>
-<%--    </div>--%>
+<div class="container-fluid">
+    <div class="tm-site-header tm-mb-1">
+        <div class="tm-em-box tm-bg-color-1">
+            <h2>Site: ${chosenSite.name}</h2>
+        </div>
+        <div class="tm-em-box tm-bg-color-8">
 
-<%--            </spring:bind>--%>
-<%--            <button type="submit">Choose</button>--%>
-<%--        </form:form>--%>
+            <div class="nav-item">
+                <a href="/app/site">
+                    <span>Choose another site</span>
+                </a>
+            </div>
+
+            <div class="nav-item">
+                <a href="/app/site/${chosenSite.id}/scaffold/add">
+                    <span>Add a scaffold</span>
+                </a>
+            </div>
+
+            <div class="nav-item">
+                <a href="/app/site/${chosenSite.id}/scaffold/showscaffolds">
+                    <span>Show scaffolds</span>
+                </a>
+            </div>
+
+            <div class="nav-item">
+                <a href="/app/site/${chosenSite.id}/area/showareas">
+                    <span>Manage areas</span>
+                </a>
+            </div>
 
 
-    </c:forEach>
-</form>
+        </div>
+        <div class="tm-em-box tm-bg-color-8">
+            <div>
+                <p>There are ${scaffoldListCount} scaffolds on this site.</p>
+                <p>There are ${unapprovedScaffoldsCount} unapproved scaffolds on this site. <a href="/app/site/${chosenSite.id}/scaffold/showunapproved"><h5>See unapproved scaffolds</h5></a></p>
+                <p>There are ${approvedScaffoldsCount} approved scaffolds on this site.</p>
+            </div>
+            <c:if test="${empty lastAddedInspection}">
+                There is no inspection yet! Add one to see info on dashboard.
+            </c:if>
+            <c:if test="${not empty lastAddedInspection}">
+                <div>
+                    <p>Last added inspection was on ${lastAddedInspection.dateOfInspection}, on ${lastInspectedArea.name} zone.</p>
+                    <p>Inspected scaffold: ${lastInspectedScaffold.name}</p>
+                    <p>Note: ${lastAddedInspection.inspectionMessage}</p>
+                    <p>Approval: ${lastAddedInspection.approved}</p>
+                </div>
+            </c:if>
+        </div>
+    </div>
 
-</table>
+
+    <footer class="text-center tm-mb-1">
+        <p><a href="github.com/kkski">github.com/kkski</a></p>
+    </footer>
+</div>
+
 <div>
     <a href="/app/site/${siteId}">
         <span>Return to dashboard</span>

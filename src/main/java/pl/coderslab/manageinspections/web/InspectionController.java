@@ -5,6 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 import pl.coderslab.manageinspections.dtos.InspectionDto;
 import pl.coderslab.manageinspections.model.*;
@@ -42,13 +43,23 @@ public class InspectionController {
         this.securityService = securityService;
     }
 
+    @ModelAttribute
+    public void init(Model model,
+                     @PathVariable("scaffId") Long scaffId,
+                     @PathVariable("siteId") Long siteId,
+                     @PathVariable("inspectionId") Long inspectionId) {
+        model.addAttribute("scaff", scaffoldRepository.getById(scaffId));
+        model.addAttribute("inspectionForm", new InspectionDto());
+        model.addAttribute("site", siteRepository.getById(siteId));
+        model.addAttribute("inspection", inspectionRepository.getById(inspectionId));
+    }
+
     @GetMapping("/add")
     public String addInspectionForm(@PathVariable("scaffId") Long scaffId,
                                     @PathVariable("siteId") Long siteId,
                                     @AuthenticationPrincipal CurrentUser customUser,
                                     Model model
-    )
-    {
+    ) {
         User entityUser = customUser.getUser();
         User myUser = userService.findByUserName(entityUser.getUsername());
 
@@ -56,8 +67,7 @@ public class InspectionController {
             return "admin/403";
         }
 
-        model.addAttribute("scaff", scaffoldRepository.getById(scaffId));
-        model.addAttribute("inspectionForm", new InspectionDto());
+
         return "app/inspection/addinspection";
 
 
@@ -65,10 +75,12 @@ public class InspectionController {
 
     @PostMapping("/add")
     public String addInspection(@Valid @ModelAttribute("inspectionForm") InspectionDto inspectionForm,
-                                      BindingResult bindingResult,
-                                      @PathVariable("scaffId") Long scaffId,
-                                      @PathVariable("siteId") Long siteId,
-                                      @AuthenticationPrincipal CurrentUser customUser) {
+                                BindingResult bindingResult,
+                                @PathVariable("scaffId") Long scaffId,
+                                @PathVariable("siteId") Long siteId,
+                                @AuthenticationPrincipal CurrentUser customUser,
+                                Model model,
+                                final RedirectAttributes redirectAttributes) {
 
         User entityUser = customUser.getUser();
         User myUser = userService.findByUserName(entityUser.getUsername());
@@ -78,6 +90,7 @@ public class InspectionController {
         }
 
         if (bindingResult.hasErrors()) {
+
             return "app/inspection/addinspection";
         }
 
@@ -115,10 +128,10 @@ public class InspectionController {
 
     @GetMapping("/{inspectionId}/delete")
     public String showInspectionToDelete(@AuthenticationPrincipal CurrentUser customUser,
-                                       Model model,
-                                       @PathVariable("siteId") Long siteId,
-                                       @PathVariable("scaffId") Long scaffId,
-                                        @PathVariable("inspectionId") Long inspectionId) {
+                                         Model model,
+                                         @PathVariable("siteId") Long siteId,
+                                         @PathVariable("scaffId") Long scaffId,
+                                         @PathVariable("inspectionId") Long inspectionId) {
 
         User entityUser = customUser.getUser();
         User myUser = userService.findByUserName(entityUser.getUsername());
@@ -127,17 +140,14 @@ public class InspectionController {
             return "admin/403";
         }
 
-        model.addAttribute("site", siteRepository.getById(siteId));
-        model.addAttribute("scaff", scaffoldRepository.getById(scaffId));
-        model.addAttribute("inspection", inspectionRepository.getById(inspectionId));
         return "app/inspection/deleteinspection";
     }
 
     @GetMapping("/{inspectionId}/delete/confirm")
     public RedirectView deleteInspection(@AuthenticationPrincipal CurrentUser customUser,
-                                   @PathVariable("siteId") Long siteId,
-                                   @PathVariable("scaffId") Long scaffId,
-                                   @PathVariable("inspectionId") Long inspectionId) {
+                                         @PathVariable("siteId") Long siteId,
+                                         @PathVariable("scaffId") Long scaffId,
+                                         @PathVariable("inspectionId") Long inspectionId) {
 
         User entityUser = customUser.getUser();
         User myUser = userService.findByUserName(entityUser.getUsername());
@@ -148,7 +158,6 @@ public class InspectionController {
 
         Inspection inspectionToRemove = inspectionRepository.getById(inspectionId);
         Scaffold chosenScaffold = scaffoldRepository.getById(scaffId);
-
 
 
         siteRepository.getById(siteId).getInspectionList().remove(inspectionToRemove);
@@ -173,10 +182,10 @@ public class InspectionController {
 
     @GetMapping("/{inspectionId}/edit")
     public String editInspectionForm(@AuthenticationPrincipal CurrentUser customUser,
-                                   Model model,
-                                   @PathVariable("siteId") Long siteId,
-                                   @PathVariable("scaffId") Long scaffId,
-                                   @PathVariable("inspectionId") Long inspectionId) {
+                                     Model model,
+                                     @PathVariable("siteId") Long siteId,
+                                     @PathVariable("scaffId") Long scaffId,
+                                     @PathVariable("inspectionId") Long inspectionId) {
 
         User entityUser = customUser.getUser();
         User myUser = userService.findByUserName(entityUser.getUsername());
@@ -185,20 +194,17 @@ public class InspectionController {
             return "admin/403";
         }
 
-        model.addAttribute("scaff", scaffoldRepository.getById(scaffId));
-        model.addAttribute("inspectionForm", new InspectionDto());
-        model.addAttribute("inspection", inspectionRepository.getById(inspectionId));
         return "app/inspection/editinspection";
 
     }
 
     @PostMapping("/{inspectionId}/edit")
     public String editInspection(@Valid @ModelAttribute("inspectionForm") InspectionDto inspectionForm,
-                               BindingResult bindingResult,
-                               @AuthenticationPrincipal CurrentUser customUser,
-                               @PathVariable("siteId") Long siteId,
-                               @PathVariable("scaffId") Long scaffId,
-                               @PathVariable("inspectionId") Long inspectionId
+                                 BindingResult bindingResult,
+                                 @AuthenticationPrincipal CurrentUser customUser,
+                                 @PathVariable("siteId") Long siteId,
+                                 @PathVariable("scaffId") Long scaffId,
+                                 @PathVariable("inspectionId") Long inspectionId
     ) {
 
         User entityUser = customUser.getUser();
@@ -240,7 +246,6 @@ public class InspectionController {
 
         scaffoldRepository.save(chosenScaffold);
         siteRepository.getById(siteId).getInspectionList().add(myInspection);
-
 
 
         return "redirect:/app/site/{siteId}/scaffold/{scaffId}/detailsscaffold";

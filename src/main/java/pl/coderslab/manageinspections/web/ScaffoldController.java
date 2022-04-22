@@ -6,6 +6,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
+import pl.coderslab.manageinspections.dtos.InspectionDto;
 import pl.coderslab.manageinspections.model.*;
 import pl.coderslab.manageinspections.model.ScaffoldDto;
 import pl.coderslab.manageinspections.repository.*;
@@ -39,6 +40,12 @@ public class ScaffoldController {
         this.scaffoldRepository = scaffoldRepository;
         this.inspectionRepository = inspectionRepository;
         this.securityService = securityService;
+    }
+    @ModelAttribute
+    public void init(Model model,
+                     @PathVariable("siteId") Long siteId) {
+        model.addAttribute("areaList", areaRepository.getAllBySiteId(siteId));
+
     }
 
     @GetMapping("/add")
@@ -124,7 +131,7 @@ public class ScaffoldController {
         }
         List<Scaffold> unapprovedScaffolds = scaffoldRepository.getAllBySiteIdAndApprovalOrderByAreaName(siteId, false);
         model.addAttribute("unapprovedScaffolds", unapprovedScaffolds);
-        return "app/scaffold/unapprovedscaffolds";
+        return "app/scaffold/showunapproved";
     }
 
     @GetMapping("/{scaffId}/detailsscaffold")
