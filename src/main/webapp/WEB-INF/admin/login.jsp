@@ -33,7 +33,7 @@
         </div>
 
         <footer class="text-center tm-mb-1">
-            <p>github.com/kkski</p>
+            <p><a href="https://github.com/kkski">github.com/kkski</a></p>
         </footer>
 
     </div>

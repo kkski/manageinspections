@@ -17,14 +17,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
     <meta name="description" content="" />
     <meta name="author" content="" />
-    <title>Manage scaffolds</title>
+    <title>Group scaffolds</title>
 </head>
 <body>
 
 <div class="container-fluid">
     <div class="tm-site-header tm-mb-1">
         <div class="tm-em-box tm-bg-color-1">
-            <h2>Find a scaffold</h2>
+            <h2>Group a scaffold</h2>
         </div>
         <div class="tm-nav-container tm-bg-color-8">
 
@@ -39,15 +39,19 @@
         <div class="tm-em-box tm-bg-color-8">
 
             <form:form method="POST" modelAttribute="scaffoldForm" class="form-signin">
-                <h2 class="form-signin-heading">Provide scaffold details</h2>
-                <spring:bind path="scaffoldId">
-                    <p>Scaffold identification:</p>
-                    <div class="form-group ${status.error ? 'has-error' : ''}">
-                        <form:input type="text" path="scaffoldId" class="form-control inputLogin" placeholder="Scaffold identification:"
-                                    autofocus="true"></form:input>
-                        <form:errors path="scaffoldId"></form:errors>
+                <h2 class="form-signin-heading">Choose area to show scaffolds from</h2>
+                <spring:bind path="area">
+                    <p>Choose area:</p>
+                    <div class="inputLogin form-group ${status.error ? 'has-error' : ''}">
+                        <form:select path="area" class="inputLogin">
+                            <form:option value="NONE">--SELECT--</form:option>
+                            <c:forEach var="area" items="${areaList}">
+                                <form:option value="${area.name}" class="inputLogin">${area.name}</form:option>
+                            </c:forEach>
+                        </form:select>
                     </div>
                 </spring:bind>
+
                 <button type="submit" class="inputLogin">Find</button>
             </form:form>
         </div>

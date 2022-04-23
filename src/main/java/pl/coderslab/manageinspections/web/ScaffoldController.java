@@ -5,6 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 import pl.coderslab.manageinspections.dtos.InspectionDto;
 import pl.coderslab.manageinspections.model.*;
@@ -152,40 +153,79 @@ public class ScaffoldController {
 
         return "app/scaffold/managescaffolds";
     }
-//
-//    @GetMapping("/find")
-//    public String showFindScaffold(@AuthenticationPrincipal CurrentUser customUser,
-//                                   @PathVariable("siteId") Long siteId) {
-//        User entityUser = customUser.getUser();
-//        User myUser = userService.findByUserName(entityUser.getUsername());
-//
-//        if (!securityService.hasAccess(myUser.getId(), siteId)) {
-//            return "admin/403";
-//        }
-//        return "app/scaffold/findscaffold";
-//    }
-//
-//    @PostMapping("/find")
-//    public String doFindScaffold(@PathVariable("siteId") Long siteId,
-//                              @Valid @ModelAttribute("scaffoldForm") ScaffoldDto scaffoldForm,
-//                              BindingResult bindingResult,
-//                              @AuthenticationPrincipal CurrentUser customUser) {
-//        if (bindingResult.hasErrors()) {
-//            return "app/scaffold/findscaffold";
-//        }
-//
-//        User entityUser = customUser.getUser();
-//        User myUser = userService.findByUserName(entityUser.getUsername());
-//
-//        if (!securityService.hasAccess(myUser.getId(), siteId)) {
-//            return "redirect:/404";
-//        }
-//
-//        Scaffold myScaffold = scaffoldRepository.findByScaffoldId(scaffoldForm.getScaffoldId());
-//        Long myScaffoldId = myScaffold.getId();
-//        return "redirect:/app/site/{siteId}/scaffold/{myScaffoldId}/detailsscaffold";
-//
-//    }
+
+    @GetMapping("/find")
+    public String showFindScaffold(@AuthenticationPrincipal CurrentUser customUser, Model model,
+                                   @PathVariable("siteId") Long siteId) {
+        User entityUser = customUser.getUser();
+        User myUser = userService.findByUserName(entityUser.getUsername());
+
+        if (!securityService.hasAccess(myUser.getId(), siteId)) {
+            return "admin/403";
+        }
+        model.addAttribute("scaffoldForm", new ScaffoldDto());
+        return "app/scaffold/findscaffold";
+    }
+
+    @PostMapping("/find")
+    public String doFindScaffold(@PathVariable("siteId") Long siteId,
+                                 @ModelAttribute("scaffoldForm") ScaffoldDto scaffoldForm,
+                                 Model model,
+                                 @AuthenticationPrincipal CurrentUser customUser, RedirectAttributes redirectAttrs) {
+
+        User entityUser = customUser.getUser();
+        User myUser = userService.findByUserName(entityUser.getUsername());
+
+        if (!securityService.hasAccess(myUser.getId(), siteId)) {
+            return "redirect:/404";
+        }
+
+        Scaffold myScaffold = scaffoldRepository.findByScaffoldId(scaffoldForm.getScaffoldId());
+        if (myScaffold == null) {
+            redirectAttrs.addAttribute("info", "noSuchScaffold");
+            return "redirect:/app/site/{siteId}/scaffold/find";
+        }
+        redirectAttrs.addAttribute("scaffId", myScaffold.getId());
+        return "redirect:/app/site/{siteId}/scaffold/{scaffId}/detailsscaffold";
+
+    }
+
+    @GetMapping("/group")
+    public String showGroupScaffold(@AuthenticationPrincipal CurrentUser customUser, Model model,
+                                   @PathVariable("siteId") Long siteId) {
+        User entityUser = customUser.getUser();
+        User myUser = userService.findByUserName(entityUser.getUsername());
+
+        if (!securityService.hasAccess(myUser.getId(), siteId)) {
+            return "admin/403";
+        }
+        model.addAttribute("areaList", areaRepository.getAllBySiteId(siteId));
+        model.addAttribute("scaffoldForm", new ScaffoldDto());
+        return "app/scaffold/groupscaffold";
+    }
+
+    @PostMapping("/group")
+    public String doGroupScaffold(@PathVariable("siteId") Long siteId,
+                                 @ModelAttribute("scaffoldForm") ScaffoldDto scaffoldForm,
+                                 @AuthenticationPrincipal CurrentUser customUser,
+                                  RedirectAttributes redirectAttrs) {
+
+        User entityUser = customUser.getUser();
+        User myUser = userService.findByUserName(entityUser.getUsername());
+
+        if (!securityService.hasAccess(myUser.getId(), siteId)) {
+            return "redirect:/404";
+        }
+
+        Area myArea = areaRepository.getAreaByNameAndSiteId(scaffoldForm.getArea(), siteId);
+        if (myArea == null) {
+            redirectAttrs.addAttribute("info", "noSuchScaffold");
+            return "redirect:/app/site/{siteId}/scaffold/group";
+        }
+        redirectAttrs.addAttribute("areaId", myArea.getId());
+        return "redirect:/app/site/{siteId}/area/{areaId}/";
+
+    }
 
     @GetMapping("/{scaffId}/detailsscaffold")
     public String showScaffoldDetails(@AuthenticationPrincipal CurrentUser customUser,

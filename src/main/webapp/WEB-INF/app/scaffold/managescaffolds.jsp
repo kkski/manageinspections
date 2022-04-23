@@ -43,16 +43,16 @@
 
         </div>
         <div class="tm-em-box tm-bg-color-8">
-<%--            <div>--%>
-<%--                <a href="/app/site/${site.id}/scaffold/find">--%>
-<%--                    <span>Find a scaffold by Scaffold Id</span>--%>
-<%--                </a>--%>
-<%--            </div>--%>
-<%--            <div>--%>
-<%--                <a href="/app/site/${site.id}/scaffold/showscaffoldsbyarea">--%>
-<%--                    <span>Find scaffolds by an area</span>--%>
-<%--                </a>--%>
-<%--            </div>--%>
+            <div>
+                <a href="/app/site/${site.id}/scaffold/find">
+                    <span>Find a scaffold by Scaffold Id</span>
+                </a>
+            </div>
+            <div>
+                <a href="/app/site/${site.id}/scaffold/group">
+                    <span>Find scaffolds by an area</span>
+                </a>
+            </div>
             <div>
                 <a href="/app/site/${site.id}/scaffold/showscaffolds">
                     <span>Show all scaffolds</span>
@@ -63,7 +63,7 @@
 
 
     <footer class="text-center tm-mb-1">
-        <p><a href="github.com/kkski">github.com/kkski</a></p>
+        <p><a href="https://github.com/kkski">github.com/kkski</a></p>
     </footer>
 </div>
 </body>

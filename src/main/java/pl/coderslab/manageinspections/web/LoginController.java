@@ -1,17 +1,12 @@
 package pl.coderslab.manageinspections.web;
 
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.view.RedirectView;
 import pl.coderslab.manageinspections.dtos.UserDto;
-import pl.coderslab.manageinspections.model.Inspector;
-import pl.coderslab.manageinspections.model.User;
 import pl.coderslab.manageinspections.repository.InspectorRepository;
 import pl.coderslab.manageinspections.repository.UserRepository;
-import pl.coderslab.manageinspections.service.CurrentUser;
 import pl.coderslab.manageinspections.service.UserService;
 
 import javax.validation.Valid;
@@ -30,7 +25,7 @@ public class LoginController {
 
     @GetMapping("")
     public String index() {
-        return "/index";
+        return "index.jsp";
     }
 
 

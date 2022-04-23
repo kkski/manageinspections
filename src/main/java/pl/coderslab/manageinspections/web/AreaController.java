@@ -33,6 +33,24 @@ public class AreaController {
         this.scaffoldRepository = scaffoldRepository;
         this.securityService = securityService;
     }
+    @GetMapping("/{areaId}")
+    public String showScaffoldsByArea(@AuthenticationPrincipal CurrentUser customUser,
+                               Model model,
+                               @PathVariable("siteId") Long siteId,
+                               @PathVariable("areaId") Long areaId) {
+
+        User entityUser = customUser.getUser();
+        User myUser = userService.findByUserName(entityUser.getUsername());
+
+        if (!securityService.hasAccess(myUser.getId(), siteId)) {
+            return "admin/403";
+        }
+        Area myArea = areaRepository.getById(areaId);
+        model.addAttribute("area", myArea);
+        model.addAttribute("scaffoldListByArea", myArea.getScaffoldList());
+        return "app/area/scaffoldsarea";
+
+    }
 
     @GetMapping("/add")
     public String addAreaForm(@AuthenticationPrincipal CurrentUser customUser,

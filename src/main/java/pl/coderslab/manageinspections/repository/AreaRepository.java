@@ -12,5 +12,4 @@ public interface AreaRepository extends JpaRepository<Area, Long> {
     @Query("select a from Area a where a.site.id = ?1")
     List<Area> getAllBySiteId(Long id);
     Area getAreaByNameAndSiteId(String name, Long id);
-    Area getAreaByScaffoldListContains(Scaffold scaffold);
 }
