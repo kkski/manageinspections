@@ -27,14 +27,8 @@
                </div>
 
                 <div class="nav-item">
-                    <a href="/app/site/${chosenSite.id}/scaffold/add">
-                        <span>Add a scaffold</span>
-                    </a>
-                </div>
-
-                <div class="nav-item">
-                    <a href="/app/site/${chosenSite.id}/scaffold/showscaffolds">
-                    <span>Show scaffolds</span>
+                    <a href="/app/site/${chosenSite.id}/scaffold/manage">
+                    <span>Manage scaffolds</span>
                     </a>
                 </div>
 

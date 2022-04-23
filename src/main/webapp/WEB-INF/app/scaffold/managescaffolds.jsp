@@ -29,36 +29,35 @@
         <div class="tm-nav-container tm-bg-color-8">
 
             <div class="nav-item">
-                <a href="/app/site/${siteId}/scaffold/manage">
-                    <span>Back to management view</span>
+                <a href="/app/site/${site.id}/scaffold/add">
+                    <span>Add a scaffold</span>
+                </a>
+            </div>
+
+            <div class="nav-item">
+                <a href="/app/site/${site.id}/">
+                    <span>Back to dashboard</span>
                 </a>
             </div>
 
 
         </div>
         <div class="tm-em-box tm-bg-color-8">
-            <h2>Scaffolds list</h2>
-            <table>
-                <tr>
-                    <th>ScaffId</th>
-                    <th>Name</th>
-                    <th>Area</th>
-                    <th>Date of erection:</th>
-                    <th>Approval</th>
-                </tr>
-                <c:forEach var="scaff" items="${scaffoldList}">
-                    <tr>
-                        <td>${scaff.scaffoldId}</td>
-                        <td>${scaff.name}</td>
-                        <td>${scaff.area.name}</td>
-                        <td>${scaff.dateOfErection}</td>
-                        <td>${scaff.approval}</td>
-                        <td><a href="/app/site/${siteId}/scaffold/${scaff.id}/detailsscaffold">Manage</a></td>
-                    </tr>
-                </c:forEach>
-                </form>
-
-            </table>
+<%--            <div>--%>
+<%--                <a href="/app/site/${site.id}/scaffold/find">--%>
+<%--                    <span>Find a scaffold by Scaffold Id</span>--%>
+<%--                </a>--%>
+<%--            </div>--%>
+<%--            <div>--%>
+<%--                <a href="/app/site/${site.id}/scaffold/showscaffoldsbyarea">--%>
+<%--                    <span>Find scaffolds by an area</span>--%>
+<%--                </a>--%>
+<%--            </div>--%>
+            <div>
+                <a href="/app/site/${site.id}/scaffold/showscaffolds">
+                    <span>Show all scaffolds</span>
+                </a>
+            </div>
         </div>
     </div>
 

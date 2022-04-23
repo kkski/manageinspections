@@ -139,6 +139,54 @@ public class ScaffoldController {
         return "app/scaffold/unapprovedscaffolds";
     }
 
+
+    @GetMapping("/manage")
+    public String showManageScaffolds(@AuthenticationPrincipal CurrentUser customUser, Model model, @PathVariable("siteId") Long siteId) {
+        User entityUser = customUser.getUser();
+        User myUser = userService.findByUserName(entityUser.getUsername());
+
+        if (!securityService.hasAccess(myUser.getId(), siteId)) {
+            return "admin/403";
+        }
+
+
+        return "app/scaffold/managescaffolds";
+    }
+//
+//    @GetMapping("/find")
+//    public String showFindScaffold(@AuthenticationPrincipal CurrentUser customUser,
+//                                   @PathVariable("siteId") Long siteId) {
+//        User entityUser = customUser.getUser();
+//        User myUser = userService.findByUserName(entityUser.getUsername());
+//
+//        if (!securityService.hasAccess(myUser.getId(), siteId)) {
+//            return "admin/403";
+//        }
+//        return "app/scaffold/findscaffold";
+//    }
+//
+//    @PostMapping("/find")
+//    public String doFindScaffold(@PathVariable("siteId") Long siteId,
+//                              @Valid @ModelAttribute("scaffoldForm") ScaffoldDto scaffoldForm,
+//                              BindingResult bindingResult,
+//                              @AuthenticationPrincipal CurrentUser customUser) {
+//        if (bindingResult.hasErrors()) {
+//            return "app/scaffold/findscaffold";
+//        }
+//
+//        User entityUser = customUser.getUser();
+//        User myUser = userService.findByUserName(entityUser.getUsername());
+//
+//        if (!securityService.hasAccess(myUser.getId(), siteId)) {
+//            return "redirect:/404";
+//        }
+//
+//        Scaffold myScaffold = scaffoldRepository.findByScaffoldId(scaffoldForm.getScaffoldId());
+//        Long myScaffoldId = myScaffold.getId();
+//        return "redirect:/app/site/{siteId}/scaffold/{myScaffoldId}/detailsscaffold";
+//
+//    }
+
     @GetMapping("/{scaffId}/detailsscaffold")
     public String showScaffoldDetails(@AuthenticationPrincipal CurrentUser customUser,
                                       Model model,
@@ -199,4 +247,20 @@ public class ScaffoldController {
 
     }
 
+//
+//    @GetMapping("/showscaffoldsbygroup")
+//    public String showScaffolds(@AuthenticationPrincipal CurrentUser customUser,
+//                                Model model,
+//                                @PathVariable("siteId") Long siteId) {
+//        User entityUser = customUser.getUser();
+//        User myUser = userService.findByUserName(entityUser.getUsername());
+//
+//        if (!securityService.hasAccess(myUser.getId(), siteId)) {
+//            return "admin/403";
+//        }
+//
+//        model.addAttribute("scaffoldList", scaffoldRepository.getAllBySiteId(siteId));
+//        return "app/scaffold/showscaffolds";
+//
+//    }
 }

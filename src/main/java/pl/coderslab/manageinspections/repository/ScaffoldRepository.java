@@ -20,5 +20,8 @@ public interface ScaffoldRepository extends JpaRepository<Scaffold, Long> {
     List<Scaffold> getAllBySiteIdAndApprovalOrderByAreaName(Long id, boolean approval);
     Scaffold getScaffoldByInspectionsListContains(Inspection inspection);
 
+    @Query("select s from Scaffold s where s.scaffoldId = ?1")
+    Scaffold findByScaffoldId(String scaffoldId);
+
 
 }
